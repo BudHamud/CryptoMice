@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const LateralStyle = styled.nav`
   background-color: #1e2837;
@@ -63,19 +63,27 @@ const LateralStyle = styled.nav`
       }
     }
   }
+  @media (max-width: 720px) {
+    position: fixed;
+    width: 100%;
+    display: none;
+  }
 `;
 
-const Lateral = () => {
+const Lateral = ({ lateral }) => {
+
+  const path = window.location.pathname
+
   const [page, setPage] = useState("");
 
   useEffect(() => {
-    setPage(values[3]);
+    setPage(path.slice(1, path.length));
   }, []);
 
-  const values = ["SPACESHIPS", "WORKERS", "FLEETS", "EXPEDITIONS", "RAIDS"];
+  const values = ["spaceships", "workers", "fleets", "expeditions", "raids"];
 
   return (
-    <LateralStyle>
+    <LateralStyle style={lateral ? {display: 'block'} : {}}>
       <div className="navDiv">
         <h4>Main Game</h4>
         <p>Play To Earn</p>
@@ -83,37 +91,37 @@ const Lateral = () => {
       <ul className="mainGame">
         <li
           className={page === values[0] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText)}
+          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
         >
-          <Link to={"/spaceships"}>Spaceships</Link>
+          <Link to={"/spaceships"}>spaceships</Link>
         </li>
         <li
           className={page === values[1] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText)}
+          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
         >
           <Link to={"/workers"}>
             <img src="workers.svg" />
-            Workers
+            workers
           </Link>
         </li>
         <li
           className={page === values[2] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText)}
+          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
         ></li>
         <li
           className={page === values[3] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText)}
+          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
         >
           <Link to={"/"}>
             <img src="planet.svg" />
-            Expeditions
+            expeditions
           </Link>
         </li>
         <li
           className={page === values[4] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText)}
+          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
         >
-          <Link to={"/raids"}>Raids</Link>
+          <Link to={"/raids"}>raids</Link>
         </li>
       </ul>
       <div className="navDiv">

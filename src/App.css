@@ -1,23 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 * {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
 }
 
 #root {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    grid-template-rows: 69px 1fr;
-    grid-template-areas: "header header" "lateral main";
-    min-height: 100vh;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: 69px 1fr;
+  grid-template-areas: "header header" "lateral main";
+  min-height: 100vh;
+}
+
+main {
+  padding: 20px;
+  grid-area: main;
+  background-color: #111827;
+  grid-area: main;
 }
 
 ::-webkit-scrollbar {
-    background-color: #111;
-    width: 10px;
+  background-color: #111;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #292a87;
+  background-color: #292a87;
+}
+
+@media (max-width: 720px) {
+  #root {
+    display: flex;
+  }
 }
