@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Mint from "../components/Mint";
+import {
+  getFirestore,
+  updateDoc,
+  doc,
+  arrayUnion,
+  collection,
+  where,
+  getDocs,
+  query,
+} from "firebase/firestore";
+import getUser from "../hooks/getUser";
+import { useUserContext } from "../context/UserContext";
 
-const WorkerStyle = styled.main`
+export const WorkerStyle = styled.main`
   .hubContainer {
     margin: 20px;
     color: #fff;
@@ -17,7 +29,6 @@ const WorkerStyle = styled.main`
       opacity: 1;
       padding: 20px;
       img {
-        margin-top: 10px;
         width: 25px;
         filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(293deg)
           brightness(107%) contrast(101%);
@@ -40,39 +51,126 @@ const WorkerStyle = styled.main`
 `;
 
 const Workers = () => {
-  const [loading, setLoading] = useState(false);
   const [estado, setEstado] = useState([]);
+  const [mp, setMp] = useState(0);
 
-  const mint = () => {
-    setLoading(!loading);
-    document.body.style.overflow = "hidden";
-    const num = Math.ceil(Math.random() * 100);
-    setTimeout(() => {
-      document.body.style.overflow = null
-      if (num <= 70) setEstado([...estado, "worker ⭐"]);
-      else if (num <= 80) setEstado([...estado, "worker ⭐⭐"]);
-      else if (num <= 90) setEstado([...estado, "worker ⭐⭐⭐"]);
-      else if (num <= 95) setEstado([...estado, "worker ⭐⭐⭐⭐"]);
-      else setEstado([...estado, "worker ⭐⭐⭐⭐⭐"]);
-    }, 2000);
+  const [userData, loadUser] = getUser();
+  const { user, setActu } = useUserContext();
+
+  useEffect(() => {
+    if (!loadUser) {
+      let num = 0;
+      userData.workers.map((e) => {
+        num += e.mp;
+      });
+      setMp(num);
+    }
+  }, [userData]);
+
+  const db = getFirestore();
+
+  const mint = async () => {
+    if (userData.chez >= 5) {
+      const num = Math.ceil(Math.random() * 100);
+      const mpnum = Math.ceil(Math.random() * 50);
+      if (num <= 44) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          workers: arrayUnion({
+            name: "Common",
+            num: 1,
+            mp: mpnum,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 0.1,
+        });
+        setActu(mpnum);
+      } else if (num <= 79) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          workers: arrayUnion({
+            name: "Hacker",
+            num: 2,
+            mp: mpnum + 50,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 0.1,
+        });
+        setActu(mpnum);
+      } else if (num <= 94) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          workers: arrayUnion({
+            name: "Magic",
+            num: 3,
+            mp: mpnum + 100,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 0.1,
+        });
+        setActu(mpnum);
+      } else if (num <= 98) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          workers: arrayUnion({
+            name: "Stripper",
+            num: 4,
+            mp: mpnum + 150,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 0.1,
+        });
+        setActu(mpnum);
+      } else {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          workers: arrayUnion({
+            name: "Dorime",
+            num: 5,
+            mp: mpnum + 200,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 0.1,
+        });
+        setActu(mpnum);
+      }
+    } else {
+      console.log('Sin Fondos');
+    }
   };
 
   return (
     <WorkerStyle>
       <div className="hubContainer">
-        <div onClick={mint}>
+        <div>
           <p>Mint Worker</p>
-          <img src="drop.svg" />
+          <img onClick={mint} src="drop.svg" />
         </div>
 
         <div>
-        <p>Current Workers</p>
-        <p>{estado.length}</p>
+          <p>Current Workers</p>
+          <p>{!loadUser ? userData.workers.length : 0}</p>
         </div>
 
-        <div>Mining Power</div>
+        <div>
+          <p>Mining Power</p>
+          <p>{mp}</p>
+        </div>
       </div>
-      <Mint estado={estado} />
+      {!loadUser ? (
+        <Mint estado={userData.workers} />
+      ) : (
+        <p
+          style={{
+            color: "#FFF",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          Loading...
+        </p>
+      )}
     </WorkerStyle>
   );
 };

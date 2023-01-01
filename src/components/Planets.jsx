@@ -1,7 +1,7 @@
 import React from 'react';
 import PlanetCard from './PlanetCard';
 
-const Planets = () => {
+const Planets = ({ fleet }) => {
 
     return (
         <section className='planetsContainer'>

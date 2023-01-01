@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useUserContext } from "../context/UserContext";
+import GetUser from "../hooks/getUser";
 import Lateral from "./Lateral";
 
 const HeaderStyle = styled.header`
@@ -10,6 +11,7 @@ const HeaderStyle = styled.header`
   grid-area: header;
   position: fixed;
   width: 100%;
+  z-index: 1;
   nav {
     display: flex;
     justify-content: space-between;
@@ -27,6 +29,47 @@ const HeaderStyle = styled.header`
       }
     }
     .game {
+    .fleetCreate {
+    text-align: center;
+    line-height: 1.8;
+    color: #9ab;
+    position: relative;
+    .hide {
+      display: none;
+      padding: 5px;
+      color: #FFF;
+      position: absolute;
+      top: 3em;
+      width: 140px;
+      background-color: #37404f;
+      border: solid 2px #FFF;
+      .fleets {
+        &:hover {
+          background-color  : #73e;
+        }
+      }
+    }
+    .show {
+      display: block;
+    }
+    .fleetBtn {
+      color: #000;
+      font-weight: 500;
+      background-color: #e44;
+      width: 150px;
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &:hover {
+      cursor: pointer;
+    }
+      img {
+        width: 20px;
+        margin-right: 10px;
+      }
+    }
+  }
       .barsContainer {
         height: 25px;
         width: 25px;
@@ -38,15 +81,12 @@ const HeaderStyle = styled.header`
         display: flex;
         align-items: center;
         background-color: #e44;
-        padding: 10px;
+        padding: 10px 15px;
         color: #000;
+        text-decoration: none;
         img {
           width: 15px;
           margin-right: 5px;
-        }
-        a {
-          text-decoration: none;
-          color: #000;
         }
       }
     }
@@ -87,9 +127,12 @@ const HeaderStyle = styled.header`
       }
     }
   }
-  @media (max-width: 720px) {
+  @media (max-width: 765px) {
     nav {
       .game {
+        .fleet {
+          padding: 10px;
+        }
         li {
           span {
             display: none;
@@ -144,13 +187,34 @@ const HeaderStyle = styled.header`
       }
     }
   }
+  @media (max-width: 500px) {
+    nav {
+      .game {
+        .fleetCreate {
+          position: absolute;
+          bottom: -50px;
+          left: 10px;
+          .fleetBtn {
+            
+          } 
+        }
+      }
+    }
+  }
 `;
 
 const Header = () => {
 
-  const [bars, setBars] = useState(false)
+  const { user, fleet, setFleet, actu } = useUserContext()
 
-  const { user } = useUserContext();
+  const [userData, loading] = GetUser()
+  const [bars, setBars] = useState(false)
+  const [page, setPage] = useState("");
+  const [show, setShow] = useState(false);
+
+  const change = (elem) => {
+    setFleet(userData.fleets.find(e => e.name === elem.target.innerText))
+  }
 
   return (
     <>
@@ -161,24 +225,24 @@ const Header = () => {
           <li className="barsContainer" onClick={() => setBars(!bars)}>
           <div className={bars ? 'bars barsActive' : 'bars'} />
           </li>
-          <li className="fleet">
-            <img src="addUser.svg" />
-            <Link to={"/createFleet"}>
-            <span>Create Fleet</span></Link>
+          <li>
+          
+          Nada
+
           </li>
         </ul>
         <ul className="money">
           <li>$CHez</li>
-          <li className={user.chezGet === 0 ? '' : "getChez"}>
-            <span>Claim</span> {user.chezGet} <span>CHez</span>
+          <li className={loading || userData.chezGet === 0 ? '' : 'getChez'}>
+            <span>Claim</span> {loading ? 0 : Number(userData.chezGet).toFixed(2)} <span>CHez</span>
           </li>
           <li>
-            <img src="CHez.svg" alt="CHez" /> {user.chez} $CHez
+            <img src="CHez.svg" alt="CHez" /> {loading || user.lenght === 0 ? 0 : userData.chez} $CHez
           </li>
         </ul>
       </nav>
     </HeaderStyle>
-    <Lateral lateral={bars} />
+    <Lateral lateral={bars} estado={page} setEstado={setPage} />
     </>
   );
 };

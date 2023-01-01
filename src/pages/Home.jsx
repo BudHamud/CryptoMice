@@ -1,234 +1,168 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import Planets from "../components/Planets";
+import { auth } from "../firebase/config";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
 import { useUserContext } from "../context/UserContext";
+import GetUser from "../hooks/getUser";
 
-export const MainStyle = styled.main`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+const HomeStyle = styled.main`
   color: #fff;
-  .cardContainer {
-    display: flex;
-    gap: 20px;
-    .card {
-      border: solid 2px #374050;
-      background-color: #123;
-      width: 94%;
-      height: 150px;
-      border-radius: 10px;
-      padding: 15px;
+  text-align: center;
+  .userProfile {
+    .hubUser {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-around;
-      h4 {
-        letter-spacing: 1.3px;
-      }
-      .mp {
-        background-color: #d27;
-        font-weight: 500;
-        padding: 10px;
-        border-radius: 5px;
-      }
-      .planet {
-        background-color: #73e;
-        font-weight: 500;
-        padding: 10px;
-        border-radius: 10px;
-      }
-    }
-  }
-  .fleetCreate {
-    width: 50%;
-    padding: 15px;
-    background-color: #1f2937;
-    border-radius: 10px;
-    margin: 30px auto 0 auto;
-    text-align: center;
-    line-height: 1.8;
-    border-left: solid 5px #e22;
-    color: #9ab;
-    .fleetBtn {
-      color: #000;
-      font-weight: 500;
-      background-color: #e44;
-      width: 450px;
-      margin: 20px auto 20px auto;
-      padding: 5px 0;
-      display: flex;
-      align-items: center;
       justify-content: center;
-      img {
-        width: 20px;
-        margin-right: 10px;
-      }
-    }
-  }
-  .planetsContainer {
-    display: grid;
-    width: 85%;
-    margin: 0 auto;
-    .planetCard {
-      border-radius: 2px;
-      margin-top: 30px;
-      background-color: #374050;
-      width: 30vw;
-      display: flex;
-      flex-direction: column;
-      text-align: left;
-      padding: 20px;
-      &:nth-child(2n + 2) {
-        justify-self: flex-end;
-      }
-      h3 {
-        font-size: 28px;
-        font-weight: 400;
-        margin-bottom: 40px;
-      }
-      .getBtn {
-        padding: 5px;
-        border-radius: 5px;
-        border: none;
-        font-size: 17px;
-        margin: 10px auto 0 auto;
-        transition: ease-in-out 0.25s;
-        background-color: transparent;
-        color: #fff;
-        &:hover {
-          background-color: #111827;
-        }
-      }
-      .divider {
-        display: flex;
-        width: 100%;
-        justify-content: space-between;
-        span {
-          font-size: 30px;
-          font-weight: 500;
-          margin-right: 5px;
-        }
-      }
-      .imgPlanet {
-        /* background: linear-gradient(#222, #444); */
-        background-color: #1e2837;
-        display: flex;
-        justify-content: center;
-        padding: 20px 0;
-        margin: 20px 0;
-        img {
-          height: 200px;
-        }
-      }
-      .main {
-        text-align: center;
-        background-color: #1e2837;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+      a {
         padding: 15px;
-        span {
-          font-size: 30px;
-          font-weight: 500;
-          margin-right: 5px;
-          padding: 5px;
-          border-radius: 10px;
-        }
-        p {
-          margin: 0 5px;
-        }
+        background-color: #234;
+        color: #FFF;
+        text-decoration: none;
       }
     }
   }
-  @media (max-width: 1170px) {
-    .fleetCreate {
-      .fleetBtn {
-        color: #000;
-        font-weight: 500;
-        background-color: #e44;
-        width: 80%;
-      }
-    }
-    .planetsContainer {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      .planetCard {
-        width: 85%;
+  input {
+    padding: 3px;
+  }
+  button {
+    margin-top: 10px;
+    padding: 3px;
+  }
+  form {
+    .formControl {
+      .error {
+        width: 200px;
+        top: 0;
+        left: 49.5%;
+        position: absolute;
+        padding: 10px;
+        background-color: #444;
+        z-index: 2;
       }
     }
   }
   @media (max-width: 720px) {
+    padding-top: 90px;
     width: 100%;
-    flex-direction: column;
-    padding-top: 100px;
-    .cardContainer {
-      align-items: center;
-      flex-direction: column;
-      .card {
-        width: 90%;
-        img {
-          width: 10%;
-        }
+    form {
+    .formControl {
+      .error {
+        width: 50vw;
+        left: 23%;
       }
-    }
-    .fleetCreate {
-      width: 90%;
     }
   }
-  @media (max-width: 500px) {
-    .planetsContainer {
-      h3 {
-        margin-bottom: 0px !important
-      }
-      .planetCard {
-        width: 95%;
-        .divider {
-          display: none;
-        }
-        .imgPlanet {
-          img {
-            max-width: 100%;
-          }
-        }
-      }
-    }
   }
 `;
 
 const Home = () => {
-  const { user } = useUserContext();
+  const [a, b, setUserData] = GetUser()
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [error, setError] = useState("");
+  const { user, setUser, setActu } = useUserContext()
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) setUser(user);
+      else setUser([]);
+    });
+  }, []);
+
+  const signIn = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      toast.success(`Acceso exitoso`);
+      setError("");
+      setActu(auth)
+    } catch (error) {
+      if (error.code === "auth/wrong-password") {
+        setError("Contraseña incorrecta", "error");
+          setTimeout(() => {
+            setError('')
+          }, 2000)
+      } else if (error.code === "auth/user-not-found") {
+        setError("Usuario no encontrado", "error");
+          setTimeout(() => {
+            setError('')
+          }, 2000)
+      } else {
+        setError("Algo salió mal", "error");
+          setTimeout(() => {
+            setError('')
+          }, 2000)
+      }
+    }
+  };
+
+  const exit = (e) => {
+    e.preventDefault();
+    auth.signOut();
+    setUser([]);
+    setUserData([{chez: 0, chezGet: 0}])
+    toast(`Hasta luego.`);
+  };
+
+  function userName() {
+    return new Promise((resolve) => {
+      if (auth.currentUser != null) {
+        resolve(auth.currentUser);
+      }
+    });
+  }
 
   return (
-    <MainStyle>
-      <section className="cardContainer">
-        <div className="card">
-          <h4>Current power</h4>
-          <p className="mp">{user.mp} MP</p>
-          <p>Based on your mine power available right now.</p>
-        </div>
+    <HomeStyle>
+      {user.length != 0 ? (
+        <section className="userProfile">
+          <img
+          style={{width: 100}}
+            src={user.photoURL ? user.photoURL : "/CHez.svg"}
+            alt="foto de perfil"
+          />
+          <div className="infoProfile">
+            <p>Welcome, {user.displayName}</p>
+            <button onClick={exit}>Cerrar Sesión</button>
+          </div>
+          <div className="hubUser">
+          <Link to={`/expeditions`}>Expeditions</Link>
+          <Link to={`/expeditions`}>Workers</Link>
+          <Link to={`/expeditions`}>Conveyance</Link>
+          </div>
+        </section>
+      ) : (
+        <>
+          <h2>Acceso</h2>
+          <form>
+            <div className="formControl">
+              <p>Email:</p>
+              <input value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
 
-        <div className="card">
-          <h4>Max planet</h4>
-          <p className="planet">Planet {Math.floor(user.mp / 100)}</p>
-          <p>Based on workers that can enter the mine right now.</p>
-        </div>
-      </section>
-      <div className="fleetCreate">
-        <p>Please select a Fleet before initializing an Expedition</p>
-        <p className="fleetBtn">
-          <img src={"addUser.svg"} />
-          Create Fleet
-        </p>
-        <p>Fleets can be found on the top left area.</p>
-      </div>
+            <div className="formControl">
+              <p>Contraseña:</p>
+              <input
+                value={pass}
+                type={"password"}
+                onChange={(e) => setPass(e.target.value)}
+              />
+            </div>
 
-      <Planets />
-    </MainStyle>
+            <div className="formControl">
+              {error === "" ? "" : <p className="error">{error}</p>}
+              <button onClick={signIn}>Ingresar</button>
+            </div>
+          </form>
+          <p style={{ marginTop: 20 }}>
+            ¿No tenés cuenta? <Link to={"/signUp"}>Crear cuenta</Link>
+          </p>
+        </>
+      )}
+    </HomeStyle>
   );
 };
 

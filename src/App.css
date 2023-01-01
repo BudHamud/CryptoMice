@@ -17,7 +17,6 @@ main {
   padding: 20px;
   grid-area: main;
   background-color: #111827;
-  grid-area: main;
 }
 
 ::-webkit-scrollbar {
@@ -29,7 +28,7 @@ main {
   background-color: #292a87;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 765px) {
   #root {
     display: flex;
   }

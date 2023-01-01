@@ -1,4 +1,7 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { useState, createContext, useContext, useEffect } from "react";
+import { auth } from "../firebase/config";
+import getUser from "../hooks/getUser";
 
 const userContext = createContext([]);
 
@@ -6,17 +9,13 @@ export const useUserContext = () => useContext(userContext);
 
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState([]);
-
-  const usuario = (e) => {
-    setUser(e)
-  }
+  const [fleet, setFleet] = useState('')
+  const [actu, setActu] = useState('')
 
   useEffect(() => {
-    usuario({
-      nombre: "Claudio",
-      mp: 3000,
-      chez: 0,
-      chezGet: 0,
+    onAuthStateChanged(auth, (user) => {
+      if (user) setUser(user);
+      else setUser([]);
     });
   }, []);
 
@@ -24,7 +23,11 @@ export const UserContextProvider = ({ children }) => {
     <userContext.Provider
       value={{
         user,
-        usuario
+        setUser,
+        fleet,
+        actu,
+        setActu,
+        setFleet
       }}
     >
       {children}

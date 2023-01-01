@@ -11,6 +11,7 @@ const LateralStyle = styled.nav`
   position: fixed;
   margin-top: 69px;
   overflow-y: scroll;
+  z-index: 1;
   .active {
     background-color: #3930ab;
     img {
@@ -24,7 +25,7 @@ const LateralStyle = styled.nav`
     width: 7px;
   }
   .navDiv {
-    background-color: #111;
+    background-color: #18202f;
     border-radius: 5px;
     padding: 5px;
     margin: 10px 2px 10px 10px;
@@ -63,65 +64,93 @@ const LateralStyle = styled.nav`
       }
     }
   }
-  @media (max-width: 720px) {
+  @media (max-width: 765px) {
     position: fixed;
     width: 100%;
     display: none;
   }
 `;
 
-const Lateral = ({ lateral }) => {
+const Lateral = ({ lateral, estado, setEstado }) => {
 
   const path = window.location.pathname
 
-  const [page, setPage] = useState("");
-
   useEffect(() => {
-    setPage(path.slice(1, path.length));
+    setEstado(path.slice(1, path.length));
   }, []);
 
-  const values = ["spaceships", "workers", "fleets", "expeditions", "raids"];
+  const values = ["conveyance", "workers", "fleets", "expeditions", "raids", 'fleets', 'home'];
 
   return (
     <LateralStyle style={lateral ? {display: 'block'} : {}}>
+      <div className="navDiv">
+        <h4>Welcome</h4>
+        <p>to CryptoMice</p>
+      </div>
+        <ul className="userTab">
+        <li
+        className={estado === values[6] ? "active" : ""}
+        onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+        >
+        <Link to={'/'}>
+        <img src="/lateral/home.svg" />
+        home
+        </Link>
+        </li>
+        </ul>
       <div className="navDiv">
         <h4>Main Game</h4>
         <p>Play To Earn</p>
       </div>
       <ul className="mainGame">
         <li
-          className={page === values[0] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
+          className={estado === values[0] ? "active" : ""}
+          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
         >
-          <Link to={"/spaceships"}>spaceships</Link>
+          <Link to={"/conveyance"}>
+          <img src="lateral/conveyance.svg" />
+          conveyance
+          </Link>
         </li>
         <li
-          className={page === values[1] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
+          className={estado === values[1] ? "active" : ""}
+          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
         >
           <Link to={"/workers"}>
-            <img src="workers.svg" />
+            <img src="lateral/workers.svg" />
             workers
           </Link>
         </li>
         <li
-          className={page === values[2] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
+          className={estado === values[5] ? "active" : ""}
+          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+        >
+          <Link to={"/fleets"}>
+            <img src="lateral/fleets.svg" />
+            fleets
+          </Link>
+        </li>
+        <li
+          className={estado === values[2] ? "active" : ""}
+          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
         ></li>
         <li
-          className={page === values[3] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
+          className={estado === values[3] ? "active" : ""}
+          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
         >
-          <Link to={"/"}>
-            <img src="planet.svg" />
+          <Link to={"/expeditions"}>
+            <img src="lateral/planet.svg" />
             expeditions
           </Link>
         </li>
         <li
-          className={page === values[4] ? "active" : ""}
-          onClick={(e) => setPage(e.target.innerText.toLowerCase())}
+          className={estado === values[4] ? "active" : ""}
+          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
         >
-          <Link to={"/raids"}>raids</Link>
+          <Link to={"/raids"}>
+          <img src="lateral/raids.svg" />
+          raids
+          </Link>
         </li>
       </ul>
       <div className="navDiv">
@@ -130,13 +159,22 @@ const Lateral = ({ lateral }) => {
       </div>
       <ul className="marketPlace">
         <li>
-          <Link>Spaceships</Link>
+          <Link>
+          <img src="lateral/cart.svg" />
+          Spaceships
+          </Link>
         </li>
         <li>
-          <Link>Workers</Link>
+          <Link>
+          <img src="lateral/cart.svg" />
+          Workers
+          </Link>
         </li>
         <li>
-          <Link>Fleets</Link>
+          <Link>
+          <img src="lateral/cart.svg" />
+          Fleets
+          </Link>
         </li>
       </ul>
     </LateralStyle>

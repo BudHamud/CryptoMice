@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import Confetti from 'react-confetti'
+import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import GetUser from "../hooks/getUser";
+import { useUserContext } from "../context/UserContext";
 
 const CargandoStyle = styled.div`
   position: fixed;
@@ -12,6 +15,7 @@ const CargandoStyle = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
   .modal {
     position: fixed;
     top: 50%;
@@ -94,6 +98,19 @@ const CargandoStyle = styled.div`
 
 const Cargando = ({ estado, exit, mp, roll, CHez }) => {
 
+  const [userData, loadUser] = GetUser()
+  const {setActu} = useUserContext()
+  const db = getFirestore()
+
+  const get = async () => {
+    await updateDoc(doc(db, "user", userData.id), {
+      // Chez: actual - total,
+      chezGet: userData.chezGet + CHez,
+    });
+    console.log('get');
+    setActu(CHez + Math.random())
+  }
+
   return (
     <CargandoStyle>
       {
@@ -108,7 +125,7 @@ const Cargando = ({ estado, exit, mp, roll, CHez }) => {
           <button onClick={exit}>X</button>
           <img src="/SUCCESS.png" />
           <p>Expedition Success</p>
-          <p><img src="CHez.svg" /> {CHez}</p>
+          <p onClick={get}><img src="CHez.svg" /> {CHez}</p>
           <div className="footer">
           <p>🎲Your roll: {roll}</p>
           <p>🏆Needed: {mp} or below</p>

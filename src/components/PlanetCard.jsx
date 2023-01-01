@@ -3,7 +3,7 @@ import { useUserContext } from "../context/UserContext";
 import Cargando from "./Cargando";
 
 const PlanetCard = (props) => {
-  const { user } = useUserContext();
+  const { fleet } = useUserContext();
   const [loading, setLoading] = useState(false);
   const [estado, setEstado] = useState('')
   const [roll, setRoll] = useState(0)
@@ -89,7 +89,7 @@ const PlanetCard = (props) => {
         </div>
       </div>
 
-      {user.mp >= props.mp ? (
+      {fleet.mp >= props.mp ? (
         <button onClick={getNum} className="getBtn">
           Start Expedition
         </button>

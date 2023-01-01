@@ -1,13 +1,14 @@
-import React from 'react';
-import { MainStyle } from './Home';
+import styled from 'styled-components'
+
+const RaidsStyle = styled.main`
+color: #FFF;
+`
 
 const Raids = () => {
     return (
-        <>
-         <MainStyle>
-         Raids
-         </MainStyle>   
-        </>
+        <RaidsStyle>
+        Todavia no configurado
+        </RaidsStyle>
     );
 }
 
