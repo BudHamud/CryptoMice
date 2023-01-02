@@ -8,12 +8,62 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 const SignUpStyle = styled.main`
   color: #fff;
   text-align: center;
+  .backBtn {
+    background-color: transparent;
+    color: #FFF;
+    border: none;
+    padding: 5px 20px;
+    font-size: 18px;
+    border-radius: 100px 0 0 100px;
+    transition: ease-in-out .25px;
+    margin-bottom: 20px;
+    &:hover {
+      background-color: #FFF;
+      color: #000;
+      transform: translateX(-20px);
+      animation: back infinite 1s;
+    }
+  }
+  @keyframes back {
+    0% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(-20px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
+  }
   input {
     padding: 3px;
   }
   button {
-    margin-top: 10px;
-    padding: 3px;
+    margin-top: 20px;
+    background-color: transparent;
+    color: #FFF;
+    border: none;
+    padding: 5px 20px;
+    font-size: 18px;
+    border-radius: 0 100px 100px 0;
+    transition: ease-in-out .25px;
+    margin-bottom: 20px;
+    &:hover {
+      background-color: #FFF;
+      color: #000;
+      animation: next infinite 1s;
+    }
+  }
+  @keyframes next {
+    0% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(20px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
   }
   form {
     .formControl {
@@ -56,9 +106,12 @@ const SingUp = () => {
       await createUserWithEmailAndPassword(auth, email, pass);
       await updateProfile(auth.currentUser, { displayName: user });
       await addDoc(collection(db, "user"), {
+        chez: 40,
+        chezGet: 0,
+        conveyance: [],
+        fleets: [],
         userId: auth.currentUser.uid,
-        saldo: 0,
-        compra: [],
+        workers: []
       });
       setEmail("");
       setPass("");
@@ -69,22 +122,22 @@ const SingUp = () => {
       }, 2000)
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setMsg("Email en uso", "error");
+        setMsg("Email in use", "error");
         setTimeout(() => {
           setMsg('')
         }, 2000)
       } else if (error.code === "auth/invalid-email") {
-        setMsg("Email inválido", "error");
+        setMsg("Invalid email", "error");
         setTimeout(() => {
           setMsg('')
         }, 2000)
       } else if (error.code === "auth/weak-password") {
-        setMsg("Contraseña debe ser mayor a 5 dígitos", "error");
+        setMsg("Passwore must have 5 or more digits", "error");
         setTimeout(() => {
           setMsg('')
         }, 2000)
       } else if (error.code) {
-        setMsg("Algo salió mal", "error");
+        setMsg("Something went wrong", "error");
         setTimeout(() => {
           setMsg('')
         }, 2000)
@@ -94,7 +147,10 @@ const SingUp = () => {
 
   return (
     <SignUpStyle>
-      <h2>Registro</h2>
+    <Link to={'/'}>
+    <button className="backBtn">Back</button>
+    </Link>
+      <h2>Sign Up</h2>
       <form>
         <div className="formControl">
           <p>Username:</p>

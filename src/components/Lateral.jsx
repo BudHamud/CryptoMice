@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
 const LateralStyle = styled.nav`
   background-color: #1e2837;
@@ -74,10 +75,15 @@ const LateralStyle = styled.nav`
 const Lateral = ({ lateral, estado, setEstado }) => {
 
   const path = window.location.pathname
+  const { actu } = useUserContext()
 
   useEffect(() => {
-    setEstado(path.slice(1, path.length));
-  }, []);
+    if (path === '/') {
+      setEstado('home')
+    } else { 
+      setEstado(path.slice(1, path.length));
+    }
+  }, [actu]);
 
   const values = ["conveyance", "workers", "fleets", "expeditions", "raids", 'fleets', 'home'];
 

@@ -5,11 +5,13 @@ import { MintStyle } from "../components/Mint";
 import { useUserContext } from "../context/UserContext";
 import getUser from "../hooks/getUser";
 import { WorkerStyle } from "./Workers";
+import Modal from "../components/Modal";
 
 const Conveyance = () => {
   const [estado, setEstado] = useState([]);
   const [space, setSpace] = useState(0);
-
+  const [msg, setMsg] = useState('')
+  const [color, setColor] = useState('')
   const [userData, loadUser] = getUser();
 
   const { user, setActu } = useUserContext()
@@ -35,38 +37,49 @@ const Conveyance = () => {
       await updateDoc(doc(db, "user", userData.id), {
         // Chez: actual - total,
         conveyance: arrayUnion({ name: "Wire", num: 1, id: Math.round(Math.random()*100000)  }),
+        chez: userData.chez - 5
       });
       setActu(mpnum)
     } else if (num <= 79) {
       await updateDoc(doc(db, "user", userData.id), {
         // Chez: actual - total,
         conveyance: arrayUnion({ name: "Pipe", num: 2, id: Math.round(Math.random()*100000)  }),
+        chez: userData.chez - 5
       });
       setActu(mpnum)
     } else if (num <= 94) {
       await updateDoc(doc(db, "user", userData.id), {
         // Chez: actual - total,
         conveyance: arrayUnion({ name: "Paper Boat", num: 3, id: Math.round(Math.random()*100000)  }),
+        chez: userData.chez - 5
       });
       setActu(mpnum)
     } else if (num <= 98) {
       await updateDoc(doc(db, "user", userData.id), {
         // Chez: actual - total,
         conveyance: arrayUnion({ name: "Toy Car", num: 4, id: Math.round(Math.random()*100000)  }),
+        chez: userData.chez - 5
       });
       setActu(mpnum)
     } else {
       await updateDoc(doc(db, "user", userData.id), {
         // Chez: actual - total,
         conveyance: arrayUnion({ name: "Wood Horse", num: 5, id: Math.round(Math.random()*100000)  }),
+        chez: userData.chez - 5
       });
       setActu(mpnum)
     }
-
+    setMsg('Operacion exitosa');
+    setColor('green')
+    setTimeout(() => {
+      setMsg('')
+    }, 2000)
     } else {
-      
-      console.log('Sin fondos');
-
+      setMsg('Sin fondos suficientes');
+      setColor('red')
+      setTimeout(() => {
+        setMsg('')
+      }, 2000)
     }
     
   };
@@ -76,7 +89,7 @@ const Conveyance = () => {
       <div className="hubContainer">
         <div>
           <p>Mint Conveyance</p>
-          <img onClick={mint} src="drop.svg" />
+          <button onClick={mint} className="mintBtn"><img src="drop.svg" /> 5 CHez</button>
         </div>
 
         <div>
@@ -94,6 +107,11 @@ const Conveyance = () => {
           <ConveyanceCard key={i} data={e} />
         )) : <p style={{display: 'flex', justifyContent: 'center', color: '#FFF'}}>Loading...</p> }
       </MintStyle>
+      {
+        msg !== '' ?
+        <Modal msg={msg} color={color} /> : ''
+      }
+      
     </WorkerStyle>
   );
 };

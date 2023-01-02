@@ -33,7 +33,7 @@ const GetUser = () => {
         .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     } else {
-      setUserData([{chez: 0, chezGet: 0}])
+      setUserData([{chez: 0, chezGet: 0, fleets: []}])
     }
   }, [user, actu]);
 

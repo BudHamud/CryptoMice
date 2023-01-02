@@ -11,8 +11,23 @@ const HomeStyle = styled.main`
   color: #fff;
   text-align: center;
   .userProfile {
+    .exitBtn {
+    background-color: transparent;
+    color: #FFF;
+    border: none;
+    padding: 5px 20px;
+    font-size: 18px;
+    border-radius: 100px 0 0 100px;
+    transition: ease-in-out .25px;
+    margin-bottom: 20px;
+    &:hover {
+      background-color: #FFF;
+      color: #000;
+    }
+  }
     .hubUser {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
       margin-top: 20px;
@@ -21,6 +36,28 @@ const HomeStyle = styled.main`
         background-color: #234;
         color: #FFF;
         text-decoration: none;
+      }
+    }
+    .basics {
+      margin: 30px auto;
+      width: 600px;
+      h3 {
+        margin-bottom: 20px;
+      }
+      .resume {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        span {
+          margin: 0 20px;
+        }
+        img {
+          width: 40px;
+          filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(293deg)
+          brightness(107%) contrast(101%);
+        }
       }
     }
   }
@@ -42,9 +79,30 @@ const HomeStyle = styled.main`
         background-color: #444;
         z-index: 2;
       }
+      button {
+        padding: 5px 20px;
+        border: none;
+        border-radius: 0 100px 100px 0;
+        background-color: transparent;
+        font-size: 18px;
+        color: #FFF;
+
+        &:hover {
+          background-color: #FFF;
+          color: #000;
+        }
+      }
     }
   }
-  @media (max-width: 720px) {
+  @media (max-width: 1020px) {
+    .userProfile {
+      .basics {
+      margin: 30px auto;
+      width: 100%;
+    }
+    }
+  }
+  @media (max-width: 765px) {
     padding-top: 90px;
     width: 100%;
     form {
@@ -126,17 +184,32 @@ const Home = () => {
           />
           <div className="infoProfile">
             <p>Welcome, {user.displayName}</p>
-            <button onClick={exit}>Cerrar Sesión</button>
+            {
+              user.length === 0 ? 'Cargando...' :
+              <button className="exitBtn" onClick={exit}>Sign Out</button>
+            }
           </div>
           <div className="hubUser">
-          <Link to={`/expeditions`}>Expeditions</Link>
-          <Link to={`/expeditions`}>Workers</Link>
-          <Link to={`/expeditions`}>Conveyance</Link>
+          <Link to={`/expeditions`} onClick={() => setActu(1)}>Expeditions</Link>
+          <Link to={`/workers`} onClick={() => setActu(2)}>Workers</Link>
+          <Link to={`/conveyance`} onClick={() => setActu(3)}>Conveyance</Link>
+          </div>
+
+          <div className="basics">
+          <h3>What is the game based on?</h3>
+          <p>You have to build a fleet of mice in order to get cheese (CHez, the in-game currency). So to build a troop you need 'Workers' and 'Conveyance'. Once you get them you can build a fleet to take them on an expedition.</p>
+          <p>This is a beta version, but in the future you will only be able to make one expedition per day PER FLEET.</p>
+          <div className="resume">
+          <img src="lateral/workers.svg" /> <span>+</span>
+          <img src="lateral/conveyance.svg" /> <span>=</span>
+          <img src="lateral/fleets.svg" /> <span>→</span>
+          <img src="lateral/planet.svg" />
+          </div>
           </div>
         </section>
       ) : (
         <>
-          <h2>Acceso</h2>
+          <h2>Access</h2>
           <form>
             <div className="formControl">
               <p>Email:</p>
@@ -144,7 +217,7 @@ const Home = () => {
             </div>
 
             <div className="formControl">
-              <p>Contraseña:</p>
+              <p>Password:</p>
               <input
                 value={pass}
                 type={"password"}
@@ -154,11 +227,11 @@ const Home = () => {
 
             <div className="formControl">
               {error === "" ? "" : <p className="error">{error}</p>}
-              <button onClick={signIn}>Ingresar</button>
+              <button onClick={signIn}>Log In</button>
             </div>
           </form>
           <p style={{ marginTop: 20 }}>
-            ¿No tenés cuenta? <Link to={"/signUp"}>Crear cuenta</Link>
+            ¿Don't have an account? <Link to={"/signUp"}>Sign Up</Link>
           </p>
         </>
       )}

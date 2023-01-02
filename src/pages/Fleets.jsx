@@ -145,7 +145,10 @@ const Fleets = () => {
                 <p>{e.name}</p>
                 <div className="extra">
                   <p>
-                    Workers {e.fleetArr.length} / {e.fleetArr.length}
+                    Workers {e.workers} / {e.workersCap}
+                  </p>
+                  <p>
+                    Conveyance { e.conveyance } / 10
                   </p>
                   <p>Rank D</p>
                 </div>

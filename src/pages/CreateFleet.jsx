@@ -2,9 +2,25 @@ import { arrayRemove, arrayUnion, doc, getFirestore, updateDoc } from "firebase/
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import GetUser from "../hooks/getUser";
+import Modal from "../components/Modal";
+import { Link } from "react-router-dom";
 
 const CreateStyle = styled.main`
   color: #fff;
+  .backBtn {
+    background-color: transparent;
+    color: #FFF;
+    border: none;
+    padding: 5px 20px;
+    font-size: 18px;
+    border-radius: 100px 0 0 100px;
+    transition: ease-in-out .25px;
+    margin-bottom: 20px;
+    &:hover {
+      background-color: #FFF;
+      color: #000;
+    }
+  }
   .createContainer {
     display: flex;
     flex-direction: column;
@@ -104,6 +120,8 @@ const CreateFleet = () => {
   const [CWS, setCWS] = useState(0);
   const [CSS, setCSS] = useState(0);
   const [fleetName, setFleetName] = useState("");
+  const [msg, setMsj] = useState('')
+  const [color, setColor] = useState('')
 
   useEffect(() => {
     if (!loadUser) {
@@ -173,16 +191,23 @@ const CreateFleet = () => {
   const newCreate = async () => {
     await updateDoc(doc(db, "user", user.id), {
       // Chez: actual - total,
-      fleets: arrayUnion({ name: fleetName, mp: CW, fleetArr: fleet }),
+      fleets: arrayUnion({ name: fleetName, mp: CW, workers: CWS, conveyance: CSS, workersCap: CS, fleetArr: fleet }),
       workers: arrayRemove(...fleet),
       conveyance: arrayRemove(...fleet)
     });
+    setFleet([])
+    setMsj('Flota creada con exito')
+    setColor('green')
+    setTimeout(() => {
+      setMsj('')
+    }, 2000)
   };
-
-  console.log(fleet);
 
   return (
     <CreateStyle>
+      <Link to={'/fleets'}>
+      <button className="backBtn">Back</button>
+      </Link>
       <section className="createContainer">
         <div className="filters">
           <button className={active ? "active" : ""} onClick={toConv}>
@@ -289,6 +314,10 @@ const CreateFleet = () => {
             </div>
           ))
         )}
+        {
+          msg !== '' ?
+          <Modal msg={msg} color={color} /> : ''
+        }
       </section>
     </CreateStyle>
   );

@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import getUser from "../hooks/getUser";
 import { useUserContext } from "../context/UserContext";
+import Modal from '../components/Modal'
 
 export const WorkerStyle = styled.main`
   .hubContainer {
@@ -28,10 +29,24 @@ export const WorkerStyle = styled.main`
       background-color: #1d2633;
       opacity: 1;
       padding: 20px;
+      position: relative;
+      .mintBtn {
+        background-color: #2ba;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        padding: 5px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 500;
+      }
       img {
+        margin-right: 5px;
         width: 25px;
-        filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(293deg)
-          brightness(107%) contrast(101%);
+        /* filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(293deg)
+          brightness(107%) contrast(101%); */
         &:hover {
           scale: 1.1;
         }
@@ -53,7 +68,8 @@ export const WorkerStyle = styled.main`
 const Workers = () => {
   const [estado, setEstado] = useState([]);
   const [mp, setMp] = useState(0);
-
+  const [msg, setMsg] = useState('')
+  const [color, setColor] = useState('')
   const [userData, loadUser] = getUser();
   const { user, setActu } = useUserContext();
 
@@ -82,7 +98,7 @@ const Workers = () => {
             mp: mpnum,
             id: Math.round(Math.random() * 100000),
           }),
-          chez: userData.chez - 0.1,
+          chez: userData.chez - 5,
         });
         setActu(mpnum);
       } else if (num <= 79) {
@@ -94,7 +110,7 @@ const Workers = () => {
             mp: mpnum + 50,
             id: Math.round(Math.random() * 100000),
           }),
-          chez: userData.chez - 0.1,
+          chez: userData.chez - 5,
         });
         setActu(mpnum);
       } else if (num <= 94) {
@@ -106,7 +122,7 @@ const Workers = () => {
             mp: mpnum + 100,
             id: Math.round(Math.random() * 100000),
           }),
-          chez: userData.chez - 0.1,
+          chez: userData.chez - 5,
         });
         setActu(mpnum);
       } else if (num <= 98) {
@@ -118,7 +134,7 @@ const Workers = () => {
             mp: mpnum + 150,
             id: Math.round(Math.random() * 100000),
           }),
-          chez: userData.chez - 0.1,
+          chez: userData.chez - 5,
         });
         setActu(mpnum);
       } else {
@@ -130,12 +146,21 @@ const Workers = () => {
             mp: mpnum + 200,
             id: Math.round(Math.random() * 100000),
           }),
-          chez: userData.chez - 0.1,
+          chez: userData.chez - 5,
         });
         setActu(mpnum);
       }
+      setMsg('Operacion exitosa');
+      setColor('green')
+      setTimeout(() => {
+        setMsg('')
+      }, 2000)
     } else {
-      console.log('Sin Fondos');
+      setMsg('Sin fondos suficientes');
+      setColor('red')
+      setTimeout(() => {
+        setMsg('')
+      }, 2000)
     }
   };
 
@@ -144,7 +169,7 @@ const Workers = () => {
       <div className="hubContainer">
         <div>
           <p>Mint Worker</p>
-          <img onClick={mint} src="drop.svg" />
+          <button onClick={mint} className="mintBtn"><img src="drop.svg" /> 5 CHez</button>
         </div>
 
         <div>
@@ -171,6 +196,11 @@ const Workers = () => {
           Loading...
         </p>
       )}
+      {
+        msg !== '' ?
+          <Modal msg={msg} color={color} />
+         : ''
+      }
     </WorkerStyle>
   );
 };
