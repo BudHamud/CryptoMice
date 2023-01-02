@@ -69,13 +69,13 @@ const Conveyance = () => {
       });
       setActu(mpnum)
     }
-    setMsg('Operacion exitosa');
+    setMsg('Successful operation');
     setColor('green')
     setTimeout(() => {
       setMsg('')
     }, 2000)
     } else {
-      setMsg('Sin fondos suficientes');
+      setMsg('Not CHez enought');
       setColor('red')
       setTimeout(() => {
         setMsg('')

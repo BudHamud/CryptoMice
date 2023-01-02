@@ -121,7 +121,7 @@ const Home = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
-  const { user, setUser, setActu } = useUserContext()
+  const { user, setUser, setActu, setFleet } = useUserContext()
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -163,6 +163,8 @@ const Home = () => {
     setUser([]);
     setUserData([{chez: 0, chezGet: 0}])
     toast(`Hasta luego.`);
+    setFleet('')
+    setActu('')
   };
 
   function userName() {

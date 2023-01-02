@@ -75,7 +75,7 @@ const LateralStyle = styled.nav`
 const Lateral = ({ lateral, estado, setEstado }) => {
 
   const path = window.location.pathname
-  const { actu } = useUserContext()
+  const { actu, setActu } = useUserContext()
 
   useEffect(() => {
     if (path === '/') {
@@ -85,7 +85,7 @@ const Lateral = ({ lateral, estado, setEstado }) => {
     }
   }, [actu]);
 
-  const values = ["conveyance", "workers", "fleets", "expeditions", "raids", 'fleets', 'home'];
+  const values = ["conveyance", "workers", "fleets", "expeditions", "raids", 'fleets', 'home', 'market/conveyance', 'market/workers', 'market/fleets'];
 
   return (
     <LateralStyle style={lateral ? {display: 'block'} : {}}>
@@ -96,7 +96,7 @@ const Lateral = ({ lateral, estado, setEstado }) => {
         <ul className="userTab">
         <li
         className={estado === values[6] ? "active" : ""}
-        onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+        onClick={() => setActu(Math.random())}
         >
         <Link to={'/'}>
         <img src="/lateral/home.svg" />
@@ -111,50 +111,50 @@ const Lateral = ({ lateral, estado, setEstado }) => {
       <ul className="mainGame">
         <li
           className={estado === values[0] ? "active" : ""}
-          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+          onClick={() => setActu(Math.random())}
         >
           <Link to={"/conveyance"}>
-          <img src="lateral/conveyance.svg" />
+          <img src="/lateral/conveyance.svg" />
           conveyance
           </Link>
         </li>
         <li
           className={estado === values[1] ? "active" : ""}
-          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+          onClick={() => setActu(Math.random())}
         >
           <Link to={"/workers"}>
-            <img src="lateral/workers.svg" />
+            <img src="/lateral/workers.svg" />
             workers
           </Link>
         </li>
         <li
           className={estado === values[5] ? "active" : ""}
-          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+          onClick={() => setActu(Math.random())}
         >
           <Link to={"/fleets"}>
-            <img src="lateral/fleets.svg" />
+            <img src="/lateral/fleets.svg" />
             fleets
           </Link>
         </li>
         <li
           className={estado === values[2] ? "active" : ""}
-          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+          onClick={() => setActu(Math.random())}
         ></li>
         <li
           className={estado === values[3] ? "active" : ""}
-          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+          onClick={() => setActu(Math.random())}
         >
           <Link to={"/expeditions"}>
-            <img src="lateral/planet.svg" />
+            <img src="/lateral/planet.svg" />
             expeditions
           </Link>
         </li>
         <li
           className={estado === values[4] ? "active" : ""}
-          onClick={(e) => setEstado(e.target.innerText.toLowerCase())}
+          onClick={() => setActu(Math.random())}
         >
           <Link to={"/raids"}>
-          <img src="lateral/raids.svg" />
+          <img src="/lateral/raids.svg" />
           raids
           </Link>
         </li>
@@ -164,21 +164,30 @@ const Lateral = ({ lateral, estado, setEstado }) => {
         <p>Buy & Sell your NFTs</p>
       </div>
       <ul className="marketPlace">
-        <li>
-          <Link>
-          <img src="lateral/cart.svg" />
-          Spaceships
+        <li
+          className={estado === values[7] ? "active" : ""}
+          onClick={() => setActu(Math.random())}
+        >
+          <Link to={'/market/conveyance'}>
+          <img src="/lateral/cart.svg" />
+          Conveyance
           </Link>
         </li>
-        <li>
-          <Link>
-          <img src="lateral/cart.svg" />
+        <li
+          className={estado === values[8] ? "active" : ""}
+          onClick={() => setActu(Math.random())}
+        >
+          <Link to={'market/workers'}>
+          <img src="/lateral/cart.svg" />
           Workers
           </Link>
         </li>
-        <li>
-          <Link>
-          <img src="lateral/cart.svg" />
+        <li
+          className={estado === values[9] ? "active" : ""}
+          onClick={() => setActu(Math.random())}
+        >
+          <Link to={'market/fleets'}>
+          <img src="/lateral/cart.svg" />
           Fleets
           </Link>
         </li>

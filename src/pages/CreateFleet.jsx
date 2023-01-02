@@ -121,6 +121,7 @@ const CreateFleet = () => {
   const [CS, setCS] = useState(0); // Space Total / Worker Cap
   const [CWS, setCWS] = useState(0); // Current Worker Status 
   const [CSS, setCSS] = useState(0); // Current Space Status
+  const [rank, setRank] = useState(0); // Fleet Rank
   const [fleetName, setFleetName] = useState("");
   const [msg, setMsj] = useState('')
   const [color, setColor] = useState('')
@@ -138,6 +139,7 @@ const CreateFleet = () => {
       let nCWS = 0;
       let nCSS = 0;
       let space = 0;
+      let numRank = 0
       fleet.map((e) => {
         //includes
         if (e.mp) {
@@ -147,11 +149,13 @@ const CreateFleet = () => {
           space += e.num;
           nCSS += 1;
         }
+        numRank += e.num
       });
       setCW(num);
       setCWS(nCWS);
       setCSS(nCSS);
       setCS(space);
+      setRank(Math.floor(numRank / (nCSS + nCWS)))
     } else {
       setCW(0);
       setCWS(0);
@@ -159,6 +163,8 @@ const CreateFleet = () => {
       setCS(0);
     }
   }, [fleet]);
+
+  console.log(rank);
 
   const addFleet = (e) => {
     if (CS > CWS) { 
@@ -216,7 +222,7 @@ const CreateFleet = () => {
     if (CW >= 100) {
       await updateDoc(doc(db, "user", user.id), {
         // Chez: actual - total,
-        fleets: arrayUnion({ name: fleetName, mp: CW, workers: CWS, conveyance: CSS, workersCap: CS, fleetArr: fleet }),
+        fleets: arrayUnion({ name: fleetName, mp: CW, workers: CWS, conveyance: CSS, workersCap: CS, fleetArr: fleet, rank: rank }),
         workers: arrayRemove(...fleet),
         conveyance: arrayRemove(...fleet)
       });

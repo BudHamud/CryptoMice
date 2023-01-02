@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import { useState } from "react";
 import Fleets from "./pages/Fleets";
+import Market from "./pages/Market";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/raids" element={<Raids />} />
         <Route path="/fleets" element={<Fleets />} />
         <Route path="/createFleet" element={<CreateFleet />} />
+        <Route path="/market/:item" element={<Market />} />
       </Routes>
       </UserContextProvider>
     </BrowserRouter>

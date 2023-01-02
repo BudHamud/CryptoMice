@@ -1,7 +1,8 @@
-import { arrayRemove, doc, getFirestore, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, collection, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Modal from "../components/Modal";
 import { useUserContext } from "../context/UserContext";
 import GetUser from "../hooks/getUser";
 
@@ -68,6 +69,8 @@ const FleetStyle = styled.main`
       .hidden {
         display: none;
         position: absolute;
+        flex-direction: column;
+        gap: 10px;
         width: 100%;
         height: 100.4%;
         justify-content: center;
@@ -111,8 +114,12 @@ const FleetStyle = styled.main`
 
 const Fleets = () => {
   const [fleets, setFleets] = useState(0);
+  const [msg, setMsg] = useState(0);
+  const [color, setColor] = useState(0);
   const [userData, loadUser] = GetUser();
-  const { user, setActu } = useUserContext();
+  const { user, setActu, setFleet } = useUserContext();
+
+  const ranked = ['D', 'C', 'B', 'A', 'S']
 
   useEffect(() => {
     if (!loadUser) {
@@ -132,6 +139,21 @@ const Fleets = () => {
       fleets: arrayRemove(userData.fleets.find(elem => elem === e)),
     });
     setActu(Math.random())
+    setFleet('')
+    setMsg('Fleet deleted')
+    setColor('green')
+  }
+
+  const sellFleet = async (e) => {
+    await addDoc(collection(db, "market"), e);
+    await updateDoc(doc(db, "user", userData.id), {
+      // Chez: actual - total,
+      fleets: arrayRemove(userData.fleets.find(elem => elem === e)),
+    });
+    setActu(Math.random())
+    setFleet('')
+    setMsg('Fleet selled')
+    setColor('green')
   }
 
   // console.log(userData.fleets.find(e => e));
@@ -165,10 +187,11 @@ const Fleets = () => {
                   <p>
                     Conveyance { e.conveyance } / 10
                   </p>
-                  <p>Rank D</p>
+                  <p>Rank {e.rank ? ranked[e.rank - 1] : 'D'}</p>
                 </div>
                 <div className="hidden">
                   <button onClick={() => deleteFleet(e)}>Delete</button>
+                  <button onClick={() => sellFleet(e)}>Sell</button>
                 </div>
                 <img src="fleet/fleet1.jpg" />
                 <p>{e.mp} MP</p>
@@ -176,6 +199,10 @@ const Fleets = () => {
             ))
           : "Cargando..."}
       </section>
+      {
+        msg !== '' ?
+        <Modal msg={msg} color={color} /> : ''
+      }
     </FleetStyle>
   );
 };

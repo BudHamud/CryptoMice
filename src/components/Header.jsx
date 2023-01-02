@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { useUserContext } from "../context/UserContext";
 import GetUser from "../hooks/getUser";
 import Lateral from "./Lateral";
+import Modal from "./Modal";
 
 const HeaderStyle = styled.header`
   background-color: #1e2837;
@@ -221,7 +223,7 @@ const HeaderStyle = styled.header`
 `;
 
 const Header = () => {
-  const { user, fleet, setFleet, actu } = useUserContext();
+  const { user, fleet, setFleet, actu, setActu } = useUserContext();
 
   const [userData, loading] = GetUser();
   const [cFleet, setCFleet] = useState("Select Fleet");
@@ -229,13 +231,39 @@ const Header = () => {
   const [page, setPage] = useState("");
   const [show, setShow] = useState(false);
   const [hide, setHide] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [color, setColor] = useState('')
 
   const change = (elem) => {
     setFleet(userData.fleets.find((e) => e.name === elem.target.innerText));
   };
 
+  const db = getFirestore()
+
+  const getChez = async () => {
+    if (userData.chezGet === 0) {
+      setMsg('No CHez to withdraw');
+      setColor('red')
+      setTimeout(() => {
+        setMsg('')
+      }, 2000)
+    } else {
+      await updateDoc(doc(db, 'user', userData.id),{
+        chez: userData.chezGet + userData.chez,
+        chezGet: 0
+      })
+      setActu(Math.random())
+      setMsg(`${userData.chezGet} CHez added`);
+      setColor('green')
+      setTimeout(() => {
+        setMsg('')
+      }, 2000)
+    }
+  }
+
   useEffect(() => {
     if (fleet !== "") setCFleet(fleet.name);
+    else setCFleet('Select Fleet')
   }, [fleet]);
 
   return (
@@ -243,7 +271,7 @@ const Header = () => {
       <HeaderStyle>
         <nav>
           <ul className="game">
-            <img className="logo" src="logo.png" alt="logo" />
+            <img className="logo" src="/logo.png" alt="logo" />
             <li className="barsContainer" onClick={() => setBars(!bars)}>
               <div className={bars ? "bars barsActive" : "bars"} />
             </li>
@@ -285,7 +313,7 @@ const Header = () => {
                   </div>
                 ) : (
                   <p className="fleetBtn">
-                    <img src={"addUser.svg"} />
+                    <img src={"/addUser.svg"} />
                     Create Fleet
                   </p>
                 )}
@@ -294,19 +322,23 @@ const Header = () => {
           </ul>
           <ul className="money">
             <li>$CHez</li>
-            <li className={loading || userData.chezGet === 0 ? "" : "getChez"}>
+            <li onClick={getChez} className={loading || userData.chezGet === 0 ? "" : "getChez"}>
               <span>Claim</span>{" "}
-              {loading ? 0 : Number(userData.chezGet).toFixed(2)}{" "}
+              {loading ? 0 : Number(userData.chezGet).toFixed(2)}
               <span>CHez</span>
             </li>
             <li>
-              <img src="CHez.svg" alt="CHez" />{" "}
-              {loading || user.lenght === 0 ? 0 : userData.chez} $CHez
+              <img src="/CHez.svg" alt="CHez" />{" "}
+              {loading || user.lenght === 0 ? 0 : Number(userData.chez).toFixed(2)} $CHez
             </li>
           </ul>
         </nav>
       </HeaderStyle>
       <Lateral lateral={bars} estado={page} setEstado={setPage} />
+      {
+        msg !== '' ?
+        <Modal msg={msg} color={color} /> : ''
+      }
     </>
   );
 };

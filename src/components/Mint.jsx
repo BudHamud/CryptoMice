@@ -15,6 +15,33 @@ export const MintStyle = styled.div`
     align-items: center;
     position: relative;
     border-radius: 10px;
+    .hidden {
+        display: none;
+        position: absolute;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+        height: 100.4%;
+        justify-content: center;
+        align-items: center;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 20px;
+        button {
+          padding: 3px 0px;
+          background-color: transparent;
+          border: none;
+          border-radius: 10px;
+          width: 90%;
+          background-color: #2fa;
+          font-weight: 500;
+        }
+      }
+      &:hover .hidden {
+        display: flex;
+      }
     img {
       width: 200px;
     }
