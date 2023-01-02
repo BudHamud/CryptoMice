@@ -4,6 +4,7 @@ import Confetti from 'react-confetti'
 import { doc, getFirestore, updateDoc } from "firebase/firestore";
 import GetUser from "../hooks/getUser";
 import { useUserContext } from "../context/UserContext";
+import { useEffect, useState } from "react";
 
 const CargandoStyle = styled.div`
   position: fixed;
@@ -100,15 +101,27 @@ const Cargando = ({ estado, exit, mp, roll, CHez }) => {
 
   const [userData, loadUser] = GetUser()
   const {setActu} = useUserContext()
+  const [repeat, setRepeat] = useState(true)
   const db = getFirestore()
 
-  const get = async () => {
-    await updateDoc(doc(db, "user", userData.id), {
-      // Chez: actual - total,
-      chezGet: userData.chezGet + CHez,
-    });
-    console.log('get');
-    setActu(CHez + Math.random())
+  useEffect(() => {
+    if (estado === 'pending') {
+      setRepeat(true)
+    }
+  }, [])
+
+  if (estado === 'success' && repeat === true) {
+    
+    const get = async () => {
+      await updateDoc(doc(db, "user", userData.id), {
+        // Chez: actual - total,
+        chezGet: userData.chezGet + CHez,
+      });
+      console.log('get');
+      setActu(CHez + Math.random())
+    }
+    get()
+    setRepeat(false)
   }
 
   return (
@@ -125,7 +138,7 @@ const Cargando = ({ estado, exit, mp, roll, CHez }) => {
           <button onClick={exit}>X</button>
           <img src="/SUCCESS.png" />
           <p>Expedition Success</p>
-          <p onClick={get}><img src="CHez.svg" /> {CHez}</p>
+          <p><img src="CHez.svg" /> {CHez}</p>
           <div className="footer">
           <p>🎲Your roll: {roll}</p>
           <p>🏆Needed: {mp} or below</p>

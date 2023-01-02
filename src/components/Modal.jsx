@@ -3,7 +3,7 @@ import styled from "styled-components";
 const ModalStyle = styled.div`
 background-color: red;
 border-radius: 10px;
-position: absolute;
+position: fixed;
 padding: 10px;
 bottom: 20px;
 right: 20px;

@@ -1,6 +1,8 @@
+import { arrayRemove, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { useUserContext } from "../context/UserContext";
 import GetUser from "../hooks/getUser";
 
 const FleetStyle = styled.main`
@@ -41,8 +43,8 @@ const FleetStyle = styled.main`
     }
   }
   .fleetContainer {
-    padding: 0 45px;
     display: flex;
+    justify-content: center;
     gap: 20px;
     text-align: center;
     flex-wrap: wrap;
@@ -110,6 +112,7 @@ const FleetStyle = styled.main`
 const Fleets = () => {
   const [fleets, setFleets] = useState(0);
   const [userData, loadUser] = GetUser();
+  const { user, setActu } = useUserContext();
 
   useEffect(() => {
     if (!loadUser) {
@@ -120,6 +123,18 @@ const Fleets = () => {
       setFleets(num);
     }
   }, [userData]);
+
+  const db = getFirestore()
+
+  const deleteFleet = async (e) => {
+    await updateDoc(doc(db, "user", userData.id), {
+      // Chez: actual - total,
+      fleets: arrayRemove(userData.fleets.find(elem => elem === e)),
+    });
+    setActu(Math.random())
+  }
+
+  // console.log(userData.fleets.find(e => e));
 
   return (
     <FleetStyle>
@@ -153,7 +168,7 @@ const Fleets = () => {
                   <p>Rank D</p>
                 </div>
                 <div className="hidden">
-                  <button>Delete</button>
+                  <button onClick={() => deleteFleet(e)}>Delete</button>
                 </div>
                 <img src="fleet/fleet1.jpg" />
                 <p>{e.mp} MP</p>

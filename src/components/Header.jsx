@@ -34,6 +34,16 @@ const HeaderStyle = styled.header`
         line-height: 1.8;
         color: #9ab;
         position: relative;
+        display: flex;
+        .hiddenBtn {
+          display: none;
+          background-color: transparent;
+          border-radius: 100px;
+          border: none;
+          color: #FFF;
+          margin-right: 5px;
+          padding: 5px;
+        }
         .hide {
           display: none;
           padding: 5px;
@@ -193,7 +203,15 @@ const HeaderStyle = styled.header`
         .fleetCreate {
           position: absolute;
           bottom: -50px;
-          left: 10px;
+          right: 0px;
+          background-color: #1e2837;
+          padding: 10px;
+          .hiddenBtn {
+            display: block;
+          }
+          .hidden {
+            display: none;
+          }
           .fleetBtn {
           }
         }
@@ -210,11 +228,15 @@ const Header = () => {
   const [bars, setBars] = useState(false);
   const [page, setPage] = useState("");
   const [show, setShow] = useState(false);
+  const [hide, setHide] = useState(false)
 
   const change = (elem) => {
     setFleet(userData.fleets.find((e) => e.name === elem.target.innerText));
-    setCFleet(elem.target.innerText);
   };
+
+  useEffect(() => {
+    if (fleet !== "") setCFleet(fleet.name);
+  }, [fleet]);
 
   return (
     <>
@@ -226,12 +248,12 @@ const Header = () => {
               <div className={bars ? "bars barsActive" : "bars"} />
             </li>
             <li>
-            <div className="fleetCreate">
-              {user.length !== 0 ? (
-                
+              <div className="fleetCreate">
+                <button onClick={() => setHide(!hide)} className="hiddenBtn">→</button>
+                {user.length !== 0 ? (
                   <div
                     onClick={() => setShow(!show)}
-                    className="fleetBtn"
+                    className={hide ? 'hidden fleetBtn' : 'fleetBtn'}
                     style={
                       cFleet !== "Select Fleet"
                         ? { backgroundColor: "#2ba" }
@@ -240,31 +262,33 @@ const Header = () => {
                   >
                     <div className="current">{cFleet}</div>
                     <div className={show ? "hide show" : "hide"}>
-                      {fleet !== '' ? userData.fleets.map((e, i) => (
-                        <div
-                          onClick={(e) => change(e)}
-                          className="fleets"
-                          key={i}
-                        >
-                          {e.name}
-                        </div>
-                      )) : userData.fleets.map((e, i) => (
-                        <div
-                          onClick={(e) => change(e)}
-                          className="fleets"
-                          key={i}
-                        >
-                          {e.name}
-                        </div>
-                      ))}
+                      {fleet !== ""
+                        ? userData.fleets.map((e, i) => (
+                            <div
+                              onClick={(e) => change(e)}
+                              className="fleets"
+                              key={i}
+                            >
+                              {e.name}
+                            </div>
+                          ))
+                        : userData.fleets.map((e, i) => (
+                            <div
+                              onClick={(e) => change(e)}
+                              className="fleets"
+                              key={i}
+                            >
+                              {e.name}
+                            </div>
+                          ))}
                     </div>
-                </div>
-              ) : (
-                <p className="fleetBtn">
-                  <img src={"addUser.svg"} />
-                  Create Fleet
-                </p>
-              )}
+                  </div>
+                ) : (
+                  <p className="fleetBtn">
+                    <img src={"addUser.svg"} />
+                    Create Fleet
+                  </p>
+                )}
               </div>
             </li>
           </ul>

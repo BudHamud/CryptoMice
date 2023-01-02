@@ -30,6 +30,7 @@ const CreateStyle = styled.main`
     min-height: 240px;
     .filters {
       display: flex;
+      flex-wrap: wrap;
       gap: 20px;
       margin-bottom: 20px;
       button {
@@ -45,6 +46,7 @@ const CreateStyle = styled.main`
       display: flex;
       flex-wrap: wrap;
       text-align: center;
+      justify-content: center;
       gap: 20px;
       .createCard {
         width: 100px;
@@ -115,10 +117,10 @@ const CreateFleet = () => {
   const [conveyance, setConveyance] = useState([]);
   const [fleet, setFleet] = useState([]);
   const [aux, setAux] = useState([]);
-  const [CW, setCW] = useState(0);
-  const [CS, setCS] = useState(0);
-  const [CWS, setCWS] = useState(0);
-  const [CSS, setCSS] = useState(0);
+  const [CW, setCW] = useState(0); // MP Total
+  const [CS, setCS] = useState(0); // Space Total / Worker Cap
+  const [CWS, setCWS] = useState(0); // Current Worker Status 
+  const [CSS, setCSS] = useState(0); // Current Space Status
   const [fleetName, setFleetName] = useState("");
   const [msg, setMsj] = useState('')
   const [color, setColor] = useState('')
@@ -159,9 +161,31 @@ const CreateFleet = () => {
   }, [fleet]);
 
   const addFleet = (e) => {
-    const elem = workers.indexOf(e);
-    setWorkers(workers.filter((e) => e !== workers[elem]));
-    setFleet([...fleet, e]);
+    if (CS > CWS) { 
+      const elem = workers.indexOf(e);
+      setWorkers(workers.filter((e) => e !== workers[elem]));
+      setFleet([...fleet, e]);
+    } else {
+      setMsj('Not enought space, add conveyance');
+      setColor('red')
+      setTimeout(() => {
+        setMsj('');
+      }, 2000)
+    }
+  };
+
+  const addCFleet = (e) => {
+    if (CSS < 10) {
+      const elem = workers.indexOf(e);
+      setWorkers(workers.filter((e) => e !== workers[elem]));
+      setFleet([...fleet, e]);
+    } else {
+      setMsj('Limit exceded');
+      setColor('red')
+      setTimeout(() => {
+        setMsj('');
+      }, 2000)
+    }
   };
 
   const addWorkers = (e) => {
@@ -189,18 +213,27 @@ const CreateFleet = () => {
   const db = getFirestore()
 
   const newCreate = async () => {
-    await updateDoc(doc(db, "user", user.id), {
-      // Chez: actual - total,
-      fleets: arrayUnion({ name: fleetName, mp: CW, workers: CWS, conveyance: CSS, workersCap: CS, fleetArr: fleet }),
-      workers: arrayRemove(...fleet),
-      conveyance: arrayRemove(...fleet)
-    });
-    setFleet([])
-    setMsj('Flota creada con exito')
-    setColor('green')
-    setTimeout(() => {
-      setMsj('')
-    }, 2000)
+    if (CW >= 100) {
+      await updateDoc(doc(db, "user", user.id), {
+        // Chez: actual - total,
+        fleets: arrayUnion({ name: fleetName, mp: CW, workers: CWS, conveyance: CSS, workersCap: CS, fleetArr: fleet }),
+        workers: arrayRemove(...fleet),
+        conveyance: arrayRemove(...fleet)
+      });
+      setFleet([])
+      setMsj('Fleet successfully created')
+      setColor('green')
+      setTimeout(() => {
+        setMsj('')
+      }, 2000)
+    } else {
+      setMsj('You must have at least 100 MP')
+      setColor('red')
+      setTimeout(() => {
+        setMsj('')
+      }, 2000)
+    }
+    
   };
 
   return (
@@ -255,7 +288,7 @@ const CreateFleet = () => {
         <div className="cardContainer">
           {workers.length !== 0
             ? workers.map((e, i) => (
-                <div onClick={() => addFleet(e)} key={i} className="createCard">
+                <div onClick={e.mp ? () => addFleet(e) : () => addCFleet(e)} key={i} className="createCard">
                   <img
                     src={`${
                       e.mp
