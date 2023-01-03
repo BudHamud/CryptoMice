@@ -7,6 +7,7 @@ position: fixed;
 padding: 10px;
 bottom: 20px;
 right: 20px;
+z-index: 4;
 `
 
 const Modal = ({ msg, color }) => {

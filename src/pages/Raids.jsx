@@ -7,7 +7,7 @@ color: #FFF;
 const Raids = () => {
     return (
         <RaidsStyle>
-        Todavia no configurado
+        Not ready yet
         </RaidsStyle>
     );
 }

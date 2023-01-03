@@ -14,7 +14,7 @@ export const MintStyle = styled.div`
     flex-direction: column;
     align-items: center;
     position: relative;
-    border-radius: 10px;
+    border-radius: 20px;
     .hidden {
         display: none;
         position: absolute;

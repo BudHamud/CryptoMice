@@ -164,8 +164,6 @@ const CreateFleet = () => {
     }
   }, [fleet]);
 
-  console.log(rank);
-
   const addFleet = (e) => {
     if (CS > CWS) { 
       const elem = workers.indexOf(e);
@@ -219,7 +217,19 @@ const CreateFleet = () => {
   const db = getFirestore()
 
   const newCreate = async () => {
-    if (CW >= 100) {
+    if (fleetName === '') {
+      setMsj('You must name your fleet')
+      setColor('red')
+      setTimeout(() => {
+        setMsj('')
+      }, 2000)
+    } else if (CW < 100) {
+      setMsj('You must have at least 100 MP')
+      setColor('red')
+      setTimeout(() => {
+        setMsj('')
+      }, 2000)
+    } else {
       await updateDoc(doc(db, "user", user.id), {
         // Chez: actual - total,
         fleets: arrayUnion({ name: fleetName, mp: CW, workers: CWS, conveyance: CSS, workersCap: CS, fleetArr: fleet, rank: rank }),
@@ -232,14 +242,7 @@ const CreateFleet = () => {
       setTimeout(() => {
         setMsj('')
       }, 2000)
-    } else {
-      setMsj('You must have at least 100 MP')
-      setColor('red')
-      setTimeout(() => {
-        setMsj('')
-      }, 2000)
     }
-    
   };
 
   return (
@@ -298,7 +301,7 @@ const CreateFleet = () => {
                   <img
                     src={`${
                       e.mp
-                        ? "workers/worker" + e.num
+                        ? "workers/workers" + e.num
                         : "conveyance/conveyance" + e.num
                     }.png`}
                   />
@@ -344,7 +347,7 @@ const CreateFleet = () => {
               <img
                 src={`${
                   e.mp
-                    ? "workers/worker" + e.num
+                    ? "workers/workers" + e.num
                     : "conveyance/conveyance" + e.num
                 }.png`}
               />

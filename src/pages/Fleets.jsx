@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "../components/Modal";
+import ModalMedium from "../components/ModalMedium";
 import { useUserContext } from "../context/UserContext";
 import GetUser from "../hooks/getUser";
 
@@ -50,7 +51,7 @@ const FleetStyle = styled.main`
     text-align: center;
     flex-wrap: wrap;
     .fleetCard {
-      width: 200px;
+      width: 210px;
       background-color: #234;
       color: #fff;
       position: relative;
@@ -103,6 +104,7 @@ const FleetStyle = styled.main`
     .fleetContainer {
       .fleetCard {
         width: 150px;
+        font-size: 15px;
       }
     }
   }
@@ -114,10 +116,14 @@ const FleetStyle = styled.main`
 
 const Fleets = () => {
   const [fleets, setFleets] = useState(0);
-  const [msg, setMsg] = useState(0);
+  const [msg, setMsg] = useState('');
   const [color, setColor] = useState(0);
   const [userData, loadUser] = GetUser();
   const { user, setActu, setFleet } = useUserContext();
+  const [sellMsg, setSellMsg] = useState("");
+  const [sellPrice, setPrice] = useState(0)
+  const [isSell, setIsSell] = useState([])
+  const [estado, setEstado] = useState([])
 
   const ranked = ['D', 'C', 'B', 'A', 'S']
 
@@ -133,30 +139,53 @@ const Fleets = () => {
 
   const db = getFirestore()
 
-  const deleteFleet = async (e) => {
+  const deleteFleet = async () => {
     await updateDoc(doc(db, "user", userData.id), {
       // Chez: actual - total,
-      fleets: arrayRemove(userData.fleets.find(elem => elem === e)),
+      fleets: arrayRemove(estado),
     });
     setActu(Math.random())
+    setSellMsg('')
     setFleet('')
     setMsg('Fleet deleted')
     setColor('green')
+    setTimeout(() => {
+      setMsg('')
+    }, 2000)
   }
 
-  const sellFleet = async (e) => {
-    await addDoc(collection(db, "market"), e);
+  const deleteModal = (e) => {
+    setIsSell(false)
+    setSellMsg('Are you sure? You will lose this fleet')
+    setEstado(e)
+  }
+
+  const sellModal = (e) => {
+    setIsSell(true)
+    setSellMsg('Set fleet price');
+    setEstado(e)
+  }
+
+  const closeClick = () => {
+    setSellMsg('')
+    setEstado([])
+  }
+
+  const sellFleet = async () => {
+    await addDoc(collection(db, "market"), {...estado, item: 'fleets', userId: userData.id, price: sellPrice.target.value});
     await updateDoc(doc(db, "user", userData.id), {
       // Chez: actual - total,
-      fleets: arrayRemove(userData.fleets.find(elem => elem === e)),
+      fleets: arrayRemove(estado),
     });
     setActu(Math.random())
     setFleet('')
-    setMsg('Fleet selled')
+    setSellMsg('');
+    setMsg('Fleet published in market')
     setColor('green')
+    setTimeout(() => {
+      setMsg("");
+    }, 2000);
   }
-
-  // console.log(userData.fleets.find(e => e));
 
   return (
     <FleetStyle>
@@ -190,10 +219,10 @@ const Fleets = () => {
                   <p>Rank {e.rank ? ranked[e.rank - 1] : 'D'}</p>
                 </div>
                 <div className="hidden">
-                  <button onClick={() => deleteFleet(e)}>Delete</button>
-                  <button onClick={() => sellFleet(e)}>Sell</button>
+                  <button onClick={() => deleteModal(e)}>Delete</button>
+                  <button onClick={() => sellModal(e)}>Sell</button>
                 </div>
-                <img src="fleet/fleet1.jpg" />
+                <img src={`fleets/fleets${e.rank}.jpg`} />
                 <p>{e.mp} MP</p>
               </div>
             ))
@@ -202,6 +231,9 @@ const Fleets = () => {
       {
         msg !== '' ?
         <Modal msg={msg} color={color} /> : ''
+      }
+      {
+        sellMsg !== "" ? <ModalMedium msg={sellMsg} onChg={setPrice} funClick={sellFleet} closeClick={closeClick} sure={deleteFleet} isSell={isSell} /> : ""
       }
     </FleetStyle>
   );

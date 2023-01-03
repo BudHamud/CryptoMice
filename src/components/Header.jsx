@@ -208,6 +208,9 @@ const HeaderStyle = styled.header`
           right: 0px;
           background-color: #1e2837;
           padding: 10px;
+          .hide {
+            top: 3.5em;
+          }
           .hiddenBtn {
             display: block;
           }
@@ -312,7 +315,7 @@ const Header = () => {
                     </div>
                   </div>
                 ) : (
-                  <p className="fleetBtn">
+                  <p className={hide ? 'hidden fleetBtn' : 'fleetBtn'}>
                     <img src={"/addUser.svg"} />
                     Create Fleet
                   </p>

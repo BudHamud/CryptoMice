@@ -221,6 +221,18 @@ export const MainStyle = styled.main`
     }
   }
   @media (max-width: 500px) {
+    .fleetCreate {
+      .fleetBtn {
+        color: #000;
+        font-weight: 500;
+        background-color: #e44;
+        width: 80%;
+      }
+      .hide {
+          width: 70%;
+          top: 8.5em;
+        }
+    }
     .planetsContainer {
       h3 {
         margin-bottom: 0px !important

@@ -32,4 +32,8 @@ main {
   #root {
     display: flex;
   }
+  main {
+    padding-top: 90px;
+    width: 100%;
+  }
 }

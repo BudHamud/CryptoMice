@@ -1,20 +1,24 @@
-import { arrayUnion, doc, getFirestore, updateDoc } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, doc, getFirestore, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import ConveyanceCard from "../components/ConveyanceCard";
 import { MintStyle } from "../components/Mint";
 import { useUserContext } from "../context/UserContext";
 import getUser from "../hooks/getUser";
 import { WorkerStyle } from "./Workers";
 import Modal from "../components/Modal";
+import Stars from "../components/Stars";
+import ModalMedium from "../components/ModalMedium";
 
 const Conveyance = () => {
   const [estado, setEstado] = useState([]);
   const [space, setSpace] = useState(0);
-  const [msg, setMsg] = useState('')
-  const [color, setColor] = useState('')
+  const [msg, setMsg] = useState("");
+  const [color, setColor] = useState("");
+  const [sellMsg, setSellMsg] = useState("");
+  const [sellPrice, setPrice] = useState(0)
+  const [isSell, setIsSell] = useState([])
   const [userData, loadUser] = getUser();
 
-  const { user, setActu } = useUserContext()
+  const { user, setActu } = useUserContext();
 
   useEffect(() => {
     if (!loadUser) {
@@ -30,58 +34,121 @@ const Conveyance = () => {
 
   const mint = async () => {
     if (userData.chez >= 5) {
-
       const num = Math.ceil(Math.random() * 100);
-    const mpnum = Math.ceil(Math.random() * 50);
-    if (num <= 44) {
-      await updateDoc(doc(db, "user", userData.id), {
-        // Chez: actual - total,
-        conveyance: arrayUnion({ name: "Wire", num: 1, id: Math.round(Math.random()*100000)  }),
-        chez: userData.chez - 5
-      });
-      setActu(mpnum)
-    } else if (num <= 79) {
-      await updateDoc(doc(db, "user", userData.id), {
-        // Chez: actual - total,
-        conveyance: arrayUnion({ name: "Pipe", num: 2, id: Math.round(Math.random()*100000)  }),
-        chez: userData.chez - 5
-      });
-      setActu(mpnum)
-    } else if (num <= 94) {
-      await updateDoc(doc(db, "user", userData.id), {
-        // Chez: actual - total,
-        conveyance: arrayUnion({ name: "Paper Boat", num: 3, id: Math.round(Math.random()*100000)  }),
-        chez: userData.chez - 5
-      });
-      setActu(mpnum)
-    } else if (num <= 98) {
-      await updateDoc(doc(db, "user", userData.id), {
-        // Chez: actual - total,
-        conveyance: arrayUnion({ name: "Toy Car", num: 4, id: Math.round(Math.random()*100000)  }),
-        chez: userData.chez - 5
-      });
-      setActu(mpnum)
+      const mpnum = Math.ceil(Math.random() * 50);
+      if (num <= 44) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          conveyance: arrayUnion({
+            name: "Wire",
+            num: 1,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 5,
+        });
+        setActu(mpnum);
+      } else if (num <= 79) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          conveyance: arrayUnion({
+            name: "Pipe",
+            num: 2,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 5,
+        });
+        setActu(mpnum);
+      } else if (num <= 94) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          conveyance: arrayUnion({
+            name: "Paper Boat",
+            num: 3,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 5,
+        });
+        setActu(mpnum);
+      } else if (num <= 98) {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          conveyance: arrayUnion({
+            name: "Toy Car",
+            num: 4,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 5,
+        });
+        setActu(mpnum);
+      } else {
+        await updateDoc(doc(db, "user", userData.id), {
+          // Chez: actual - total,
+          conveyance: arrayUnion({
+            name: "Wood Horse",
+            num: 5,
+            id: Math.round(Math.random() * 100000),
+          }),
+          chez: userData.chez - 5,
+        });
+        setActu(mpnum);
+      }
+      setMsg("Successful operation");
+      setColor("green");
+      setTimeout(() => {
+        setMsg("");
+      }, 2000);
     } else {
-      await updateDoc(doc(db, "user", userData.id), {
-        // Chez: actual - total,
-        conveyance: arrayUnion({ name: "Wood Horse", num: 5, id: Math.round(Math.random()*100000)  }),
-        chez: userData.chez - 5
-      });
-      setActu(mpnum)
+      setMsg("Not CHez enought");
+      setColor("red");
+      setTimeout(() => {
+        setMsg("");
+      }, 2000);
     }
-    setMsg('Successful operation');
+  };
+
+  const deleteFleet = async () => {
+    await updateDoc(doc(db, "user", userData.id), {
+      // Chez: actual - total,
+      conveyance: arrayRemove(estado),
+    });
+    setActu(Math.random());
+    setSellMsg('')
+    setMsg("Conveyance deleted");
+    setColor("green");
+    setTimeout(() => {
+      setMsg("");
+    }, 2000);
+  };
+
+  const deleteModal = (e) => {
+    setIsSell(false)
+    setSellMsg('Are you sure? You will lose this conveyance')
+    setEstado(e)
+  }
+
+  const sellModal = (e) => {
+    setIsSell(true)
+    setSellMsg('Set conveyance price');
+    setEstado(e)
+  }
+
+  const closeClick = () => {
+    setSellMsg('')
+  }
+
+  const sellFleet = async () => {
+    await addDoc(collection(db, "market"), {...estado, item: 'conveyance', userId: userData.id, price: sellPrice.target.value});
+    await updateDoc(doc(db, "user", userData.id), {
+      // Chez: actual - total,
+      conveyance: arrayRemove(estado),
+    });
+    setActu(Math.random())
+    setSellMsg('')
+    setMsg('Conveyance published in market')
     setColor('green')
     setTimeout(() => {
-      setMsg('')
-    }, 2000)
-    } else {
-      setMsg('Not CHez enought');
-      setColor('red')
-      setTimeout(() => {
-        setMsg('')
-      }, 2000)
-    }
-    
+      setMsg("");
+    }, 2000);
   };
 
   return (
@@ -89,7 +156,9 @@ const Conveyance = () => {
       <div className="hubContainer">
         <div>
           <p>Mint Conveyance</p>
-          <button onClick={mint} className="mintBtn"><img src="drop.svg" /> 5 CHez</button>
+          <button onClick={mint} className="mintBtn">
+            <img src="drop.svg" /> 5 CHez
+          </button>
         </div>
 
         <div>
@@ -103,15 +172,32 @@ const Conveyance = () => {
         </div>
       </div>
       <MintStyle>
-        {!loadUser ? userData.conveyance.map((e, i) => (
-          <ConveyanceCard key={i} data={e} />
-        )) : <p style={{display: 'flex', justifyContent: 'center', color: '#FFF'}}>Loading...</p> }
+        {!loadUser ? (
+          userData.conveyance.map((e, i) => (
+            <div key={i} className="workerCard">
+              <img src={`/conveyance/conveyance${e.num}.png`} />
+              <div className="conveyanceStars">
+                <Stars data={e} bool={true} />
+              </div>
+              <p>{e.num} Workers</p>
+              <div className="hidden">
+                <button onClick={() => deleteModal(e)}>Delete</button>
+                <button onClick={() => sellModal(e)}>Sell</button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p
+            style={{ display: "flex", justifyContent: "center", color: "#FFF" }}
+          >
+            Loading...
+          </p>
+        )}
       </MintStyle>
+      {msg !== "" ? <Modal msg={msg} color={color} /> : ""}
       {
-        msg !== '' ?
-        <Modal msg={msg} color={color} /> : ''
+        sellMsg !== "" ? <ModalMedium msg={sellMsg} onChg={setPrice} funClick={sellFleet} closeClick={closeClick} sure={deleteFleet} isSell={isSell} /> : ""
       }
-      
     </WorkerStyle>
   );
 };

@@ -41,15 +41,16 @@ export const WorkerStyle = styled.main`
         border-radius: 10px;
         font-size: 16px;
         font-weight: 500;
+        transition: ease-in-out .25s;
+        &:hover {
+          scale: 1.08;
+        }
       }
       img {
         margin-right: 5px;
         width: 25px;
         /* filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(293deg)
           brightness(107%) contrast(101%); */
-        &:hover {
-          scale: 1.1;
-        }
       }
     }
   }

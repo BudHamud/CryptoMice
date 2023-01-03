@@ -117,7 +117,6 @@ const Cargando = ({ estado, exit, mp, roll, CHez }) => {
         // Chez: actual - total,
         chezGet: userData.chezGet + CHez,
       });
-      console.log('get');
       setActu(CHez + Math.random())
     }
     get()
