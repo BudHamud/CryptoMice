@@ -4,6 +4,7 @@ import styled from "styled-components";
 import GetUser from "../hooks/getUser";
 import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
 const CreateStyle = styled.main`
   color: #fff;
@@ -126,6 +127,8 @@ const CreateFleet = () => {
   const [msg, setMsj] = useState('')
   const [color, setColor] = useState('')
 
+  const {setActu} = useUserContext()
+
   useEffect(() => {
     if (!loadUser) {
       setWorkers(user.workers);
@@ -237,6 +240,7 @@ const CreateFleet = () => {
         conveyance: arrayRemove(...fleet)
       });
       setFleet([])
+      setActu(fleetName)
       setMsj('Fleet successfully created')
       setColor('green')
       setTimeout(() => {

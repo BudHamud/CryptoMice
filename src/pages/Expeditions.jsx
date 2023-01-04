@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Planets from "../components/Planets";
 import { useUserContext } from "../context/UserContext";
@@ -76,6 +77,7 @@ export const MainStyle = styled.main`
       display: block;
     }
     .fleetBtn {
+      text-decoration: none;
       color: #000;
       font-weight: 500;
       background-color: #e44;
@@ -253,7 +255,7 @@ export const MainStyle = styled.main`
 `;
 
 const Expeditions = () => {
-  const {fleet, setFleet } = useUserContext();
+  const {fleet, setFleet, setActu } = useUserContext();
   const [userData, loadUser] = GetUser()
   // const [cFleet, setCFleet] = useState('Select Fleet')
   const [show, setShow] = useState(false)
@@ -278,28 +280,45 @@ const Expeditions = () => {
         </div>
       </section>
       {
-        fleet ? '' :
+        !loadUser || fleet ?
         
-        <div className="fleetCreate">
-        <p>Please select a Fleet before initializing an Expedition</p>
+        <>
         {
-          !loadUser ?
-          <div onClick={() => setShow(!show)} className="fleetBtn">
-          <div className="current">Select Fleet</div>
-          <div className={show ? 'hide show' : 'hide'}>
-          {userData.fleets.map((e, i) => (
-            <div onClick={(e) => change(e)} className="fleets" key={i}>{e.name}</div>
-          ))} 
-          </div>
-          </div>
-          :
-          <p className="fleetBtn">
-          <img src={"addUser.svg"} />
-          Create Fleet
-          </p>
-        }
-        <p>Fleets can be found on the top left area.</p>
-      </div>
+          fleet ? '' :
+
+
+          <div className="fleetCreate">
+          <p>Please select a Fleet before initializing an Expedition</p>
+          {
+            userData.fleets.length !== 0 ?
+            <div onClick={() => setShow(!show)} className="fleetBtn">
+            <div className="current">Select Fleet</div>
+            <div className={show ? 'hide show' : 'hide'}>
+            {userData.fleets.map((e, i) => (
+              <div onClick={(e) => change(e)} className="fleets" key={i}>{e.name}</div>
+            ))} 
+            </div>
+            </div>
+            :
+            <Link onClick={(e) => setActu(e.target.innerText)} to={'/createFleet'} className="fleetBtn">
+            <img src={"addUser.svg"} />
+            Create Fleet
+            </Link>
+          }
+          <p>Fleets can be found on the top left area.</p>
+        </div>
+
+      }
+      </> : 
+      <div className="fleetCreate">
+      <p>Please select a Fleet before initializing an Expedition</p>
+        <Link onClick={(e) => setActu(e.target.innerText)} to={'/createFleet'} className="fleetBtn">
+        <img src={"addUser.svg"} />
+        Create Fleet
+        </Link>
+      <p>Fleets can be found on the top left area.</p>
+    </div>
+
       }
 
       <Planets fleet={fleet} />

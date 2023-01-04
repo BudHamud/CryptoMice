@@ -62,10 +62,14 @@ const FleetStyle = styled.main`
       }
       .extra {
         position: absolute;
-        bottom: 100px;
+        top: 50px;
         padding: 5px;
         text-align: left;
         background-color: #932;
+        span {
+          padding: 2px 8px;
+          border-radius: 50px;
+        }
       }
       .hidden {
         display: none;
@@ -126,6 +130,7 @@ const Fleets = () => {
   const [estado, setEstado] = useState([])
 
   const ranked = ['D', 'C', 'B', 'A', 'S']
+  const colored = ['#00836c', '#0a6eb5', '#ef4234', '#0eb1d9', '#f9af41']
 
   useEffect(() => {
     if (!loadUser) {
@@ -216,7 +221,7 @@ const Fleets = () => {
                   <p>
                     Conveyance { e.conveyance } / 10
                   </p>
-                  <p>Rank {e.rank ? ranked[e.rank - 1] : 'D'}</p>
+                  <p>Rank <span style={{backgroundColor: colored[e.rank - 1]}}>{e.rank ? ranked[e.rank - 1] : 'D'}</span></p>
                 </div>
                 <div className="hidden">
                   <button onClick={() => deleteModal(e)}>Delete</button>
@@ -233,7 +238,11 @@ const Fleets = () => {
         <Modal msg={msg} color={color} /> : ''
       }
       {
-        sellMsg !== "" ? <ModalMedium msg={sellMsg} onChg={setPrice} funClick={sellFleet} closeClick={closeClick} sure={deleteFleet} isSell={isSell} /> : ""
+        sellMsg !== "" ?
+        <div className="blackBack">
+        <ModalMedium msg={sellMsg} onChg={setPrice} funClick={sellFleet} closeClick={closeClick} sure={deleteFleet} isSell={isSell} />
+        </div>
+        : ""
       }
     </FleetStyle>
   );

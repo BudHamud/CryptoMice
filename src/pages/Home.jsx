@@ -6,6 +6,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useUserContext } from "../context/UserContext";
 import GetUser from "../hooks/getUser";
+import Modal from '../components/Modal'
 
 const HomeStyle = styled.main`
   color: #fff;
@@ -120,7 +121,8 @@ const Home = () => {
   const [a, b, setUserData] = GetUser()
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
-  const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
+  const [color, setColor] = useState("");
   const { user, setUser, setActu, setFleet } = useUserContext()
 
   useEffect(() => {
@@ -134,24 +136,30 @@ const Home = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, pass);
-      toast.success(`Acceso exitoso`);
-      setError("");
+      setMsg(`Successful login`);
+      setColor('green')
       setActu(auth)
+      setTimeout(() => {
+        setMsg('')
+      }, 2000)
     } catch (error) {
       if (error.code === "auth/wrong-password") {
-        setError("Contraseña incorrecta", "error");
+        setMsg("Wrong password", "error");
+        setColor('red')
           setTimeout(() => {
-            setError('')
+            setMsg('')
           }, 2000)
       } else if (error.code === "auth/user-not-found") {
-        setError("Usuario no encontrado", "error");
+        setMsg("User not found", "error");
+        setColor('red')
           setTimeout(() => {
-            setError('')
+            setMsg('')
           }, 2000)
       } else {
-        setError("Algo salió mal", "error");
+        setMsg("Something went wrong", "error");
+        setColor('red')
           setTimeout(() => {
-            setError('')
+            setMsg('')
           }, 2000)
       }
     }
@@ -162,18 +170,14 @@ const Home = () => {
     auth.signOut();
     setUser([]);
     setUserData([{chez: 0, chezGet: 0}])
-    toast(`Hasta luego.`);
+    setMsg(`Goodbye 👋`);
+    setColor('black')
     setFleet('')
     setActu('')
+    setTimeout(() => {
+      setMsg('')
+    }, 2000)
   };
-
-  function userName() {
-    return new Promise((resolve) => {
-      if (auth.currentUser != null) {
-        resolve(auth.currentUser);
-      }
-    });
-  }
 
   return (
     <HomeStyle>
@@ -210,7 +214,7 @@ const Home = () => {
           </div>
         </section>
       ) : (
-        <>
+        <section>
           <h2>Access</h2>
           <form>
             <div className="formControl">
@@ -228,15 +232,19 @@ const Home = () => {
             </div>
 
             <div className="formControl">
-              {error === "" ? "" : <p className="error">{error}</p>}
               <button onClick={signIn}>Log In</button>
             </div>
           </form>
           <p style={{ marginTop: 20 }}>
             ¿Don't have an account? <Link to={"/signUp"}>Sign Up</Link>
           </p>
-        </>
+        </section>
       )}
+      {
+        msg !== '' ?
+          <Modal msg={msg} color={color} />
+         : ''
+      }
     </HomeStyle>
   );
 };

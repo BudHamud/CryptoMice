@@ -13,7 +13,7 @@ const HeaderStyle = styled.header`
   grid-area: header;
   position: fixed;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   nav {
     display: flex;
     justify-content: space-between;
@@ -37,6 +37,11 @@ const HeaderStyle = styled.header`
         color: #9ab;
         position: relative;
         display: flex;
+        a {
+          display: flex;
+          text-decoration: none;
+          color: #000;
+        }
         .hiddenBtn {
           display: none;
           background-color: transparent;
@@ -279,22 +284,17 @@ const Header = () => {
               <div className={bars ? "bars barsActive" : "bars"} />
             </li>
             <li>
+            {
+              !loading ? 
               <div className="fleetCreate">
-                <button onClick={() => setHide(!hide)} className="hiddenBtn">→</button>
-                {user.length !== 0 ? (
-                  <div
-                    onClick={() => setShow(!show)}
-                    className={hide ? 'hidden fleetBtn' : 'fleetBtn'}
-                    style={
-                      cFleet !== "Select Fleet"
-                        ? { backgroundColor: "#2ba" }
-                        : {}
-                    }
-                  >
-                    <div className="current">{cFleet}</div>
-                    <div className={show ? "hide show" : "hide"}>
-                      {fleet !== ""
-                        ? userData.fleets.map((e, i) => (
+              <button onClick={() => setHide(!hide)} className="hiddenBtn">→</button>
+              {
+              userData.fleets.length !== 0 ?
+              <div onClick={() => setShow(!show)} className={hide ? 'hidden fleetBtn' : 'fleetBtn'} style={ cFleet !== "Select Fleet" ? { backgroundColor: "#2ba" } : {} } >
+              <div className="current">{cFleet}</div>
+              <div className={show ? "hide show" : "hide"}>
+                      {
+                        userData.fleets.map((e, i) => (
                             <div
                               onClick={(e) => change(e)}
                               className="fleets"
@@ -303,24 +303,19 @@ const Header = () => {
                               {e.name}
                             </div>
                           ))
-                        : userData.fleets.map((e, i) => (
-                            <div
-                              onClick={(e) => change(e)}
-                              className="fleets"
-                              key={i}
-                            >
-                              {e.name}
-                            </div>
-                          ))}
-                    </div>
-                  </div>
-                ) : (
-                  <p className={hide ? 'hidden fleetBtn' : 'fleetBtn'}>
-                    <img src={"/addUser.svg"} />
-                    Create Fleet
-                  </p>
-                )}
+                      }
               </div>
+
+              </div> : 
+              <Link onClick={(e) => setActu(e.target.innerText)} to={'/createFleet'} className={hide ? 'hidden fleetBtn' : 'fleetBtn'}><img src="/addUser.svg" /> Create Fleet</Link>
+            }
+            </div> : 
+            <div className="fleetCreate">
+            <button onClick={() => setHide(!hide)} className="hiddenBtn">→</button>
+            <Link onClick={(e) => setActu(e.target.innerText)} to={'/createFleet'} className={hide ? 'hidden fleetBtn' : 'fleetBtn'}><img src="/addUser.svg" /> Create Fleet</Link>
+            </div>
+            
+          }
             </li>
           </ul>
           <ul className="money">

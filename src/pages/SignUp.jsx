@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
+import Modal from "../components/Modal";
+import { useUserContext } from "../context/UserContext";
 
 const SignUpStyle = styled.main`
   color: #fff;
@@ -93,10 +95,13 @@ const SignUpStyle = styled.main`
 `;
 
 const SingUp = () => {
-  const [user, setUser] = useState("");
+  const {user, setActu} = useUserContext()
+
+  const [userName, setUser] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [msg, setMsg] = useState("");
+  const [color, setColor] = useState("");
 
   const db = getFirestore();
 
@@ -104,7 +109,7 @@ const SingUp = () => {
     e.preventDefault()
     try {
       await createUserWithEmailAndPassword(auth, email, pass);
-      await updateProfile(auth.currentUser, { displayName: user });
+      await updateProfile(auth.currentUser, { displayName: userName });
       await addDoc(collection(db, "user"), {
         chez: 40,
         chezGet: 0,
@@ -113,31 +118,37 @@ const SingUp = () => {
         userId: auth.currentUser.uid,
         workers: []
       });
+      setActu('new')
+      setColor('green')
+      setMsg("Register and login successful");
       setEmail("");
       setPass("");
       setUser("");
-      setMsg("Registro y acceso exitoso");
       setTimeout(() => {
         setMsg('')
       }, 2000)
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setMsg("Email in use", "error");
+        setColor('red')
         setTimeout(() => {
           setMsg('')
         }, 2000)
       } else if (error.code === "auth/invalid-email") {
         setMsg("Invalid email", "error");
+        setColor('red')
         setTimeout(() => {
           setMsg('')
         }, 2000)
       } else if (error.code === "auth/weak-password") {
         setMsg("Passwore must have 5 or more digits", "error");
+        setColor('red')
         setTimeout(() => {
           setMsg('')
         }, 2000)
       } else if (error.code) {
         setMsg("Something went wrong", "error");
+        setColor('red')
         setTimeout(() => {
           setMsg('')
         }, 2000)
@@ -150,12 +161,14 @@ const SingUp = () => {
     <Link to={'/'}>
     <button className="backBtn">Back</button>
     </Link>
-      <h2>Sign Up</h2>
-      <form>
+      {auth.currentUser === null ? <h2>Sign Up</h2> : <h2>Welcome {auth.currentUser.displayName}</h2>}
+      {
+        auth.currentUser === null ?
+        <form>
         <div className="formControl">
           <p>Username:</p>
           <input
-            value={user}
+            value={userName}
             type={"text"}
             onChange={(e) => setUser(e.target.value)}
           />
@@ -181,12 +194,14 @@ const SingUp = () => {
 
         <div className="formControl">
           <button onClick={sign}>Register</button>
-          {
-            msg === '' ? '' :
-            <p className="error">{msg}</p>
-          }
         </div>
-      </form>
+      </form> : 'You already logged in, come back.'
+      }
+      {
+        msg !== '' ?
+          <Modal msg={msg} color={color} />
+         : ''
+      }
     </SignUpStyle>
   );
 };

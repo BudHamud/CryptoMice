@@ -45,11 +45,15 @@ const MarketStyle = styled.main`
       }
       .extra {
         position: absolute;
-        bottom: 100px;
+        top: 50px;
         padding: 5px;
         text-align: left;
         left: 0;
         background-color: #932;
+        span {
+          padding: 2px 8px;
+          border-radius: 100px;
+        }
       }
       button {
         padding: 2px 8px;
@@ -79,6 +83,7 @@ const Market = () => {
   const [userData] = GetUser();
   const { setActu, actu } = useUserContext();
   const ranked = ["D", "C", "B", "A", "S"];
+  const colored = ['#00836c', '#0a6eb5', '#ef4234', '#0eb1d9', '#f9af41']
 
   const { item } = useParams();
 
@@ -159,7 +164,7 @@ const Market = () => {
                       Workers {e.workers} / {e.workersCap}
                     </p>
                     <p>Conveyance {e.conveyance} / 10</p>
-                    <p>Rank {e.rank ? ranked[e.rank - 1] : "D"}</p>
+                    <p>Rank <span style={{backgroundColor: colored[e.rank - 1]}}>{e.rank ? ranked[e.rank - 1] : 'D'}</span></p>
                   </div>
                 ) : (
                   ""

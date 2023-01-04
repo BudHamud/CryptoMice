@@ -12,7 +12,7 @@ const LateralStyle = styled.nav`
   position: fixed;
   margin-top: 69px;
   overflow-y: scroll;
-  z-index: 1;
+  z-index: 2;
   .active {
     background-color: #3930ab;
     img {
