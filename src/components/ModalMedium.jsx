@@ -22,6 +22,14 @@ const MediumStyle = styled.div`
     padding: 5px;
     border-radius: 5px;
     width: 100%;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+    &[type="number"] {
+      appearance: none;
+    }
   }
   button {
     padding: 10px 20px;
