@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
 import { getAuth } from 'firebase/auth'
+import env from 'react-dotenv'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDZOWWOFyaA3MT5PCSqNIaWPBumk2nxRI4",
+  apiKey: process.env.API_KEY,
   authDomain: "crypto-mice.firebaseapp.com",
   projectId: "crypto-mice",
   storageBucket: "crypto-mice.appspot.com",
