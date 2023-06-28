@@ -9,7 +9,6 @@ import { UserContextProvider } from './context/UserContext'
 import CreateFleet from "./pages/CreateFleet";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
-import { useState } from "react";
 import Fleets from "./pages/Fleets";
 import Market from "./pages/Market";
 

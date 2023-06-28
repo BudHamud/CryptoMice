@@ -242,26 +242,28 @@ const Header = () => {
   const [msg, setMsg] = useState('')
   const [color, setColor] = useState('')
 
+  const [userDataCured, setCured] = useState([{chez: 0, chezGet: 0, fleets: []}])
+
   const change = (elem) => {
-    setFleet(userData.fleets.find((e) => e.name === elem.target.innerText));
+    setFleet(userDataCured.fleets.find((e) => e.name === elem.target.innerText));
   };
 
   const db = getFirestore()
 
   const getChez = async () => {
-    if (userData.chezGet === 0) {
+    if (userDataCured.chezGet === 0) {
       setMsg('No CHez to withdraw');
       setColor('red')
       setTimeout(() => {
         setMsg('')
       }, 2000)
     } else {
-      await updateDoc(doc(db, 'user', userData.id),{
-        chez: userData.chezGet + userData.chez,
+      await updateDoc(doc(db, 'user', userDataCured.id),{
+        chez: userDataCured.chezGet + userDataCured.chez,
         chezGet: 0
       })
       setActu(Math.random())
-      setMsg(`${userData.chezGet} CHez added`);
+      setMsg(`${userDataCured.chezGet} CHez added`);
       setColor('green')
       setTimeout(() => {
         setMsg('')
@@ -270,9 +272,10 @@ const Header = () => {
   }
 
   useEffect(() => {
+    if (userData !== undefined) setCured(userData)
     if (fleet !== "") setCFleet(fleet.name);
     else setCFleet('Select Fleet')
-  }, [fleet]);
+  }, [fleet, userData]);
 
   return (
     <>
@@ -289,12 +292,12 @@ const Header = () => {
               <div className="fleetCreate">
               <button onClick={() => setHide(!hide)} className="hiddenBtn">→</button>
               {
-              userData.fleets.length !== 0 ?
+              userDataCured.fleets.length !== 0 ?
               <div onClick={() => setShow(!show)} className={hide ? 'hidden fleetBtn' : 'fleetBtn'} style={ cFleet !== "Select Fleet" ? { backgroundColor: "#2ba" } : {} } >
               <div className="current">{cFleet}</div>
               <div className={show ? "hide show" : "hide"}>
                       {
-                        userData.fleets.map((e, i) => (
+                        userDataCured.fleets.map((e, i) => (
                             <div
                               onClick={(e) => change(e)}
                               className="fleets"
@@ -320,14 +323,14 @@ const Header = () => {
           </ul>
           <ul className="money">
             <li>$CHez</li>
-            <li onClick={getChez} className={loading || userData.chezGet === 0 ? "" : "getChez"}>
+            <li onClick={getChez} className={loading || userDataCured.chezGet === 0 ? "" : "getChez"}>
               <span>Claim</span>{" "}
-              {loading ? 0 : Number(userData.chezGet).toFixed(2)}
+              {loading ? 0 : Number(userDataCured.chezGet).toFixed(2)}
               <span>CHez</span>
             </li>
             <li>
               <img src="/CHez.svg" alt="CHez" />{" "}
-              {loading || user.lenght === 0 ? 0 : Number(userData.chez).toFixed(2)} $CHez
+              {loading || user.lenght === 0 ? 0 : Number(userDataCured.chez).toFixed(2)} $CHez
             </li>
           </ul>
         </nav>

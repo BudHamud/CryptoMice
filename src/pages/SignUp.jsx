@@ -95,7 +95,7 @@ const SignUpStyle = styled.main`
 `;
 
 const SingUp = () => {
-  const {user, setActu} = useUserContext()
+  const { user, setActu } = useUserContext()
 
   const [userName, setUser] = useState("");
   const [email, setEmail] = useState("");

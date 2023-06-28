@@ -12,7 +12,7 @@ const GetUser = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState([]);
 
-  const { user, actu } = useUserContext();  
+  const { user, actu } = useUserContext();
 
   useEffect(() => {
     if (user.length != 0) {
