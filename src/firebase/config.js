@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.API_KEY,
+  apiKey: import.meta.env.VITE_APP_API_KEY,
   authDomain: "crypto-mice.firebaseapp.com",
   projectId: "crypto-mice",
   storageBucket: "crypto-mice.appspot.com",
