@@ -69,14 +69,16 @@ const HomeStyle = styled.main`
     margin-top: 10px;
     padding: 3px;
   }
-  a {
-    color: #fff;
-    text-decoration: none;
-    border-radius: 0 100px 100px 0;
-    padding: 5px 20px;
-    :hover {
-      background-color: #fff;
-      color: #000;
+  .access {
+    a {
+      color: #fff;
+      text-decoration: none;
+      border-radius: 0 100px 100px 0;
+      padding: 5px 20px;
+      :hover {
+        background-color: #fff;
+        color: #000;
+      }
     }
   }
   form {
@@ -241,7 +243,7 @@ const Home = () => {
           </div>
         </section>
       ) : (
-        <section>
+        <section className="access">
           <h2>Access</h2>
           <form>
             <div className="formControl">
