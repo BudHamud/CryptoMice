@@ -51,9 +51,9 @@ const LateralStyle = styled.nav`
         align-items: center;
         font-size: 15px;
         &:hover {
-        background-color: #3930ab;
-        cursor: pointer;
-      }
+          background-color: #3930ab;
+          cursor: pointer;
+        }
       }
       img {
         width: 20px;
@@ -62,6 +62,23 @@ const LateralStyle = styled.nav`
         filter: invert(86%) sepia(100%) saturate(0%) hue-rotate(293deg)
           brightness(107%) contrast(101%);
         opacity: 0.5;
+      }
+    }
+    .social {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      li {
+        :hover img {
+          opacity: 1;
+        }
+        a {
+          margin: 0;
+          img {
+            margin: 0;
+            transition: ease-in-out .2s;
+          }
+        }
       }
     }
   }
@@ -73,37 +90,47 @@ const LateralStyle = styled.nav`
 `;
 
 const Lateral = ({ lateral, estado, setEstado }) => {
-
-  const path = window.location.pathname
-  const { actu, setActu } = useUserContext()
+  const path = window.location.pathname;
+  const { actu, setActu } = useUserContext();
 
   useEffect(() => {
-    if (path === '/') {
-      setEstado('home')
-    } else { 
+    if (path === "/") {
+      setEstado("home");
+    } else {
       setEstado(path.slice(1, path.length));
     }
   }, [actu]);
 
-  const values = ["conveyance", "workers", "fleets", "expeditions", "raids", 'fleets', 'home', 'market/conveyance', 'market/workers', 'market/fleets'];
+  const values = [
+    "conveyance",
+    "workers",
+    "fleets",
+    "expeditions",
+    "raids",
+    "fleets",
+    "home",
+    "market/conveyance",
+    "market/workers",
+    "market/fleets",
+  ];
 
   return (
-    <LateralStyle style={lateral ? {display: 'block'} : {}}>
+    <LateralStyle style={lateral ? { display: "block" } : {}}>
       <div className="navDiv">
         <h4>Welcome</h4>
         <p>to CryptoMice</p>
       </div>
-        <ul className="userTab">
+      <ul className="userTab">
         <li
-        className={estado === values[6] ? "active" : ""}
-        onClick={() => setActu(Math.random())}
+          className={estado === values[6] ? "active" : ""}
+          onClick={() => setActu(Math.random())}
         >
-        <Link to={'/'}>
-        <img src="/lateral/home.svg" />
-        home
-        </Link>
+          <Link to={"/"}>
+            <img src="/lateral/home.svg" />
+            home
+          </Link>
         </li>
-        </ul>
+      </ul>
       <div className="navDiv">
         <h4>Main Game</h4>
         <p>Play To Earn</p>
@@ -114,8 +141,8 @@ const Lateral = ({ lateral, estado, setEstado }) => {
           onClick={() => setActu(Math.random())}
         >
           <Link to={"/conveyance"}>
-          <img src="/lateral/conveyance.svg" />
-          conveyance
+            <img src="/lateral/conveyance.svg" />
+            conveyance
           </Link>
         </li>
         <li
@@ -154,8 +181,8 @@ const Lateral = ({ lateral, estado, setEstado }) => {
           onClick={() => setActu(Math.random())}
         >
           <Link to={"/raids"}>
-          <img src="/lateral/raids.svg" />
-          raids
+            <img src="/lateral/raids.svg" />
+            raids
           </Link>
         </li>
       </ul>
@@ -168,29 +195,38 @@ const Lateral = ({ lateral, estado, setEstado }) => {
           className={estado === values[7] ? "active" : ""}
           onClick={() => setActu(Math.random())}
         >
-          <Link to={'/market/conveyance'}>
-          <img src="/lateral/cart.svg" />
-          Conveyance
+          <Link to={"/market/conveyance"}>
+            <img src="/lateral/cart.svg" />
+            Conveyance
           </Link>
         </li>
         <li
           className={estado === values[8] ? "active" : ""}
           onClick={() => setActu(Math.random())}
         >
-          <Link to={'market/workers'}>
-          <img src="/lateral/cart.svg" />
-          Workers
+          <Link to={"market/workers"}>
+            <img src="/lateral/cart.svg" />
+            Workers
           </Link>
         </li>
         <li
           className={estado === values[9] ? "active" : ""}
           onClick={() => setActu(Math.random())}
         >
-          <Link to={'market/fleets'}>
-          <img src="/lateral/cart.svg" />
-          Fleets
+          <Link to={"market/fleets"}>
+            <img src="/lateral/cart.svg" />
+            Fleets
           </Link>
         </li>
+        <div className="navDiv">
+          <h4>Social Media</h4>
+          <p>Contact with me</p>
+        </div>
+        <ul className="social">
+          <li><a href="https://github.com/BudHamud"><img src="/social/github.svg" /></a></li>
+          <li><a href="https://www.linkedin.com/in/adrielcamacho/"><img src="/social/linkedin.svg" /></a></li>
+          <li><a href="https://twitter.com/AdrielCamacho"><img src="/social/twitter.svg" /></a></li>
+        </ul>
       </ul>
     </LateralStyle>
   );
